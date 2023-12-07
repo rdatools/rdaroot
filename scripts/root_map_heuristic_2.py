@@ -10,10 +10,19 @@ NOTE - This should closely approximate our original 'baseline' approach.
 
 For example:
 
-TODO 
-$ scripts/root_map_heuristic_2.py -s NC -p temp/NC_2020_points.csv -a temp/NC_2020_adjacencies.csv
-$ scripts/root_map_heuristic_2.py -s NC -p temp/NC_2020_points.csv -a temp/NC_2020_adjacencies.csv -q
-$ scripts/root_map_heuristic_2.py -s NC -p temp/NC_2020_points.csv -a temp/NC_2020_adjacencies.csv -q -u
+scripts/root_map_heuristic_2.py \
+    --state NC \
+    --data ../rdadata/data/NC/NC_2020_data.csv \
+    --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
+    --graph ../rdadata/data/NC/NC_2020_graph.json \
+    --points temp/NC_2020_points.csv 
+    --adjacencies temp/NC_2020_adjacencies.csv \
+    --map output/NC_2020_root_map.csv \
+        help="Path to the output map.csv",
+        type=str,
+    --candidates output/NC_2020_root_candidates.json \
+    --scores output/NC_2020_root_scores.csv \
+    --log output/NC_2020_root_log.txt"
 
 For documentation, type:
 
@@ -85,7 +94,7 @@ def main() -> None:
 
     data: Dict[str, Dict[str, int | str]] = load_data(args.data)
     shapes: Dict[str, Any] = load_shapes(args.shapes)
-    # graph_data: Dict[str, list[str]] = load_graph(args.graph)
+    graph: Dict[str, list[str]] = load_graph(args.graph)
     metadata: Dict[str, Any] = load_metadata(args.state, args.data)
 
     ### SETUP FOR ITERATIONS ###
@@ -97,25 +106,24 @@ def main() -> None:
 
     points: List[Point] = read_redistricting_points(args.points)  # must exist
     pairs: List[Tuple[str, str]] = read_redistricting_pairs(args.adjacencies)  # ditto
+
     index_points_file(points, dccvt_points, verbose=args.verbose)
     index_pairs_file(points, pairs, dccvt_adjacencies, verbose=args.verbose)
 
     pop_by_geoid: Dict[str, int] = populations(data)
     total_pop: int = total_population(pop_by_geoid)
 
-    # HERE
-
     ### LOOP FOR THE SPECIFIED NUMBER OF CONFORMING CANDIDATES ###
 
     lowest_energy: float = float("inf")
-    scores: List[Dict] = list()
+    scores: List[Dict[str, Any]] = list()
     candidates: List[Dict[str, str | float | Dict[str, int | str]]] = list()
 
     conforming_count: int = 0
     seed: int = start
 
-    with open(root_log, "a") as f:
-        for i, seed in enumerate(range(start, start + iterations)):
+    with open(args.log, "a") as f:
+        for i, seed in enumerate(range(start, start + args.iterations)):
             print(f"... {conforming_count} ...")
             print(f"Conforming count: {conforming_count}, random seed: {seed}", file=f)
 
@@ -156,23 +164,25 @@ def main() -> None:
                     dccvt_adjacencies,
                     label,
                     dccvt_consolidated,
-                    verbose=verbose,
+                    verbose=args.verbose,
                 )
                 complete(
                     dccvt_consolidated,
                     dccvt_adjacencies,
                     dccvt_points,
                     dccvt_complete,
-                    verbose=verbose,
+                    verbose=args.verbose,
                 )
 
                 # De-index Balzer assignments to use GEOIDs.
-                postprocess(dccvt_complete, points_csv, dccvt_output, verbose=verbose)
+                postprocess(
+                    dccvt_complete, args.points, dccvt_output, verbose=args.verbose
+                )
 
                 # Calculate the energy & population deviation of the map.
                 energy: float = calc_energy_file(dccvt_complete, dccvt_points)
                 popdev: float = calc_population_deviation_file(
-                    dccvt_output, populations, total_pop, N
+                    dccvt_output, pop_by_geoid, total_pop, N
                 )
 
                 # If the map does not have 'roughly' equal population, discard it.
@@ -203,7 +213,7 @@ def main() -> None:
                 # If the energy is less than the best energy so far, save the map as the best map so far.
                 if energy < lowest_energy:
                     lowest_energy = energy
-                    shutil.copy(dccvt_output, root_map)
+                    shutil.copy(dccvt_output, args.map)
 
             except Exception as e:
                 print(f"Failure: {e}", file=f)
@@ -216,10 +226,10 @@ def main() -> None:
 
     ### SAVE THE CANDIDATE MAPS & THEIR SCORES ###
 
-    write_json(root_candidates, candidates)
+    write_json(args.candidates, candidates)
 
     fields: List[str] = list(scores[0].keys())
-    write_csv(root_scores, scores, fields, precision="{:.6f}")
+    write_csv(args.scores, scores, fields, precision="{:.6f}")
 
 
 def parse_args() -> Namespace:
@@ -300,21 +310,6 @@ def parse_args() -> Namespace:
         default=0.02,
         help="'Roughly equal' population threshold",
     )
-    # TODO - DELETE
-    # parser.add_argument(
-    #     "-u",
-    #     "--unsimplified",
-    #     dest="unsimplified",
-    #     action="store_true",
-    #     help="Use unsimplified points & adjacencies",
-    # )
-    # parser.add_argument(
-    #     "-q",
-    #     "--qualify",
-    #     dest="qualify",
-    #     action="store_true",
-    #     help="Qualify the outputs",
-    # )
 
     parser.add_argument(
         "-v", "--verbose", dest="verbose", action="store_true", help="Verbose mode"
