@@ -1,4 +1,4 @@
-# rootmap
+# rdaroot
 
 Root redistricting maps (plans)
 
@@ -59,8 +59,8 @@ That is our approximate root map.
 Clone the repository:
 
 ```bash
-$ git clone https://github.com/alecramsay/rootmap
-$ cd rootmap
+$ git clone https://github.com/alecramsay/rdaroot
+$ cd rdaroot
 ```
 
 There is no package to install, just command line scripts to run.

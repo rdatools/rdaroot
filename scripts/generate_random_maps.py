@@ -35,7 +35,7 @@ from rdafn import (
     load_plan,
     analyze_plan,
 )
-from rootmap import (
+from rdaroot import (
     dccvt_randommap,
     dccvt_initial,
     dccvt_points,

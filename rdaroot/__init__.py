@@ -1,4 +1,4 @@
-# rootmap/__init__.py
+# rdaroot/__init__.py
 
 from .balzerio import (
     read_redistricting_points,
@@ -22,4 +22,4 @@ from .balzer import (
     calc_population_deviation,
 )
 
-name: str = "rootmap"
+name: str = "rdaroot"
