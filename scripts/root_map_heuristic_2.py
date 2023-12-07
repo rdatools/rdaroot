@@ -32,7 +32,6 @@ import argparse
 from argparse import ArgumentParser, Namespace
 from typing import Any, List, Dict, Tuple
 
-import os
 import shutil
 
 from rdabase import (
@@ -121,7 +120,7 @@ def main() -> None:
     seed: int = start
 
     with open(args.log, "a") as f:
-        for i, seed in enumerate(range(start, start + args.iterations)):
+        while True:
             print(f"... {conforming_count} ...")
             print(f"Conforming count: {conforming_count}, random seed: {seed}", file=f)
 
@@ -213,9 +212,16 @@ def main() -> None:
                     lowest_energy = energy
                     shutil.copy(dccvt_output, args.map)
 
+                # If the conforming candidate count equal to the number of iterations, stop.
+                if conforming_count == args.iterations:
+                    break
+
             except Exception as e:
                 print(f"Failure: {e}", file=f)
                 continue
+
+            finally:
+                seed += 1
 
         print(
             f"{conforming_count} conforming candidates took {seed - start + 1} random seeds.",

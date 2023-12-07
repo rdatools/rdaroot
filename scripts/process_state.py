@@ -11,6 +11,7 @@ For documentation, type:
 
 $ scripts/process_state.py -h
 
+TODO - Update this
 TODO - Convert this to a shell script <<< Todd
 
 """
