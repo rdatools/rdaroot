@@ -53,21 +53,21 @@ def parse_args() -> Namespace:
     parser.add_argument(
         "-d",
         "--data",
-        default="../rdabase/data/NC/NC_2020_data.csv",
+        required=True,
         help="Path to the input data.csv",
         type=str,
     )
     parser.add_argument(
         "-s",
         "--shapes",
-        default="../rdabase/data/NC/NC_2020_shapes_simplified.json",
+        required=True,
         help="Path to the input shapes.json",
         type=str,
     )
     parser.add_argument(
         "-p",
         "--points",
-        default="temp/NC_2020_points.csv",
+        required=True,
         help="Path to the output points.csv",
         type=str,
     )
