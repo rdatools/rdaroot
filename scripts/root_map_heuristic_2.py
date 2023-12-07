@@ -20,7 +20,8 @@ scripts/root_map_heuristic_2.py \
     --map output/NC_2020_root_map.csv \
     --candidates output/NC_2020_root_candidates.json \
     --scores output/NC_2020_root_scores.csv \
-    --log output/NC_2020_root_log.txt
+    --log output/NC_2020_root_log.txt \
+    --explicit
 
 For documentation, type:
 
@@ -35,7 +36,7 @@ from typing import Any, List, Dict, Tuple
 import shutil
 
 from rdabase import (
-    cycle,
+    require_args,
     DISTRICTS_BY_STATE,
     starting_seed,
     populations,
@@ -243,49 +244,41 @@ def parse_args() -> Namespace:
 
     parser.add_argument(
         "--state",
-        default="NC",
         help="The two-character state code (e.g., NC)",
         type=str,
     )
     parser.add_argument(
         "--data",
         type=str,
-        default="../rdadata/data/NC/NC_2020_data.csv",
         help="Data file",
     )
     parser.add_argument(
         "--shapes",
         type=str,
-        default="../rdadata/data/NC/NC_2020_shapes_simplified.json",
         help="Shapes abstract file",
     )
     parser.add_argument(
         "--graph",
         type=str,
-        default="../rdadata/data/NC/NC_2020_graph.json",
         help="Graph file",
     )
     parser.add_argument(
         "--points",
-        default="temp/NC_2020_points.csv",
         help="Path to the input points.csv",
         type=str,
     )
     parser.add_argument(
         "--adjacencies",
-        default="temp/NC_2020_adjacencies.csv",
         help="Path to the input adjacencies.csv",
         type=str,
     )
     parser.add_argument(
         "--map",
-        default="output/NC_2020_root_map.csv",
         help="Path to the output map.csv",
         type=str,
     )
     parser.add_argument(
         "--candidates",
-        default="output/NC_2020_root_candidates.json",
         help="Path to the output candidates.json",
         type=str,
     )
@@ -297,7 +290,7 @@ def parse_args() -> Namespace:
     )
     parser.add_argument(
         "--log",
-        default="output/NC_2020_root_log.txt",
+        default="output/log.txt",
         help="Path to the output log.txt",
         type=str,
     )
@@ -319,7 +312,28 @@ def parse_args() -> Namespace:
         "-v", "--verbose", dest="verbose", action="store_true", help="Verbose mode"
     )
 
+    # Enable debug/explicit mode
+    parser.add_argument("--debug", default=True, action="store_true", help="Debug mode")
+    parser.add_argument(
+        "--explicit", dest="debug", action="store_false", help="Explicit mode"
+    )
+
     args: Namespace = parser.parse_args()
+
+    # Default values for args in debug mode
+    debug_defaults: Dict[str, Any] = {
+        "state": "NC",
+        "data": "../rdadata/data/NC/NC_2020_data.csv",
+        "shapes": "../rdadata/data/NC/NC_2020_shapes_simplified.json",
+        "graph": "../rdadata/data/NC/NC_2020_graph.json",
+        "points": "temp/NC_2020_points.csv",
+        "adjacencies": "temp/NC_2020_adjacencies.csv",
+        "map": "output/NC_2020_root_map.csv",
+        "candidates": "output/NC_2020_root_candidates.json",
+        "scores": "output/NC_2020_root_scores.csv",
+    }
+    args = require_args(args, args.debug, debug_defaults)
+
     return args
 
 
