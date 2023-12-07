@@ -1,4 +1,4 @@
-rdadata
-rdafn
 rdapy
+rdabase
+rdascore
 scipy
