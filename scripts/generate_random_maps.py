@@ -162,9 +162,6 @@ def main() -> None:
                 assignments: List[Assignment] = load_plan(dccvt_randommap)
 
                 plan: Dict[str, int | str] = {a.geoid: a.district for a in assignments}
-                # plan: Dict[str, int] = {
-                #     str(a["GEOID"]): int(a["DISTRICT"]) for a in assignments
-                # }
                 candidates.append({"name": label, "plan": plan})  # No weights.
 
                 record: Dict[str, Any] = dict()

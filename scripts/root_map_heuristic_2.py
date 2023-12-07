@@ -10,6 +10,7 @@ NOTE - This should closely approximate our original 'baseline' approach.
 
 For example:
 
+$ scripts/root_map_heuristic_2.py -s NC -p temp/NC_2020_points.csv -a temp/NC_2020_adjacencies.csv
 $ scripts/root_map_heuristic_2.py -s NC -p temp/NC_2020_points.csv -a temp/NC_2020_adjacencies.csv -q
 $ scripts/root_map_heuristic_2.py -s NC -p temp/NC_2020_points.csv -a temp/NC_2020_adjacencies.csv -q -u
 
@@ -27,7 +28,15 @@ from typing import Any, List, Dict, Tuple
 import os
 import shutil
 
-from rdabase import cycle, DISTRICTS_BY_STATE, starting_seed, write_csv, write_json
+from rdabase import (
+    cycle,
+    DISTRICTS_BY_STATE,
+    starting_seed,
+    write_csv,
+    write_json,
+    Point,
+    Assignment,
+)
 from rdascore import (
     load_data,
     load_shapes,
@@ -60,9 +69,8 @@ from rdaroot import (
     consolidate,
     complete,
     postprocess,
-    Redistricting_Point,
-    calc_energy,
-    calc_population_deviation,
+    calc_energy_file,
+    calc_population_deviation_file,
 )
 
 
@@ -89,12 +97,12 @@ def main() -> None:
         if qualify
         else ""
     )
-    root_map: str = "maps/" + f"{xx}_{cycle}_root_map" + qualifier + ".csv"
-    root_scores: str = "maps/" + f"{xx}_{cycle}_root_scores" + qualifier + ".csv"
+    root_map: str = "output/" + f"{xx}_{cycle}_root_map" + qualifier + ".csv"
+    root_scores: str = "output/" + f"{xx}_{cycle}_root_scores" + qualifier + ".csv"
     root_candidates: str = (
-        "maps/" + f"{xx}_{cycle}_root_candidates" + qualifier + ".json"
+        "output/" + f"{xx}_{cycle}_root_candidates" + qualifier + ".json"
     )
-    root_log: str = "maps/" + f"{xx}_{cycle}_root_log" + qualifier + ".txt"
+    root_log: str = "output/" + f"{xx}_{cycle}_root_log" + qualifier + ".txt"
 
     N: int = DISTRICTS_BY_STATE[xx]["congress"]
     start: int = starting_seed(xx, N)
@@ -105,7 +113,7 @@ def main() -> None:
     if unsimplified:  # NOTE - Use unsimplified points & adjacencies.
         points_csv = os.path.abspath("testdata/NC/baseline.data.input.csv")
         adjacencies_csv = os.path.abspath("testdata/NC/baseline.adjacencies.input.csv")
-    points: List[Redistricting_Point] = read_redistricting_points(points_csv)
+    points: List[Point] = read_redistricting_points(points_csv)
     pairs: List[Tuple[str, str]] = read_redistricting_pairs(adjacencies_csv)
     index_points_file(points, dccvt_points, verbose=verbose)
     index_pairs_file(points, pairs, dccvt_adjacencies, verbose=verbose)
@@ -129,7 +137,7 @@ def main() -> None:
 
     lowest_energy: float = float("inf")
     scores: List[Dict] = list()
-    candidates: List[Dict[str, str | float | Dict[str, int]]] = list()
+    candidates: List[Dict[str, str | float | Dict[str, int | str]]] = list()
 
     conforming_count: int = 0
     seed: int = start
@@ -190,8 +198,8 @@ def main() -> None:
                 postprocess(dccvt_complete, points_csv, dccvt_output, verbose=verbose)
 
                 # Calculate the energy & population deviation of the map.
-                energy: float = calc_energy(dccvt_complete, dccvt_points)
-                popdev: float = calc_population_deviation(
+                energy: float = calc_energy_file(dccvt_complete, dccvt_points)
+                popdev: float = calc_population_deviation_file(
                     dccvt_output, populations, total_pop, N
                 )
 
@@ -201,11 +209,9 @@ def main() -> None:
 
                 # Otherwise increment candidate count, save the plan, & score it.
                 conforming_count += 1
-                assignments: List[Dict[str, str | int]] = load_plan(dccvt_output)
+                assignments: List[Assignment] = load_plan(dccvt_output)
 
-                plan: Dict[str, int] = {
-                    str(a["GEOID"]): int(a["DISTRICT"]) for a in assignments
-                }
+                plan: Dict[str, int | str] = {a.geoid: a.district for a in assignments}
                 candidates.append({"name": label, "plan": plan})  # No weights.
 
                 record: Dict[str, Any] = dict()
