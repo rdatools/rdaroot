@@ -15,14 +15,12 @@ scripts/root_map_heuristic_2.py \
     --data ../rdadata/data/NC/NC_2020_data.csv \
     --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
     --graph ../rdadata/data/NC/NC_2020_graph.json \
-    --points temp/NC_2020_points.csv 
+    --points temp/NC_2020_points.csv \
     --adjacencies temp/NC_2020_adjacencies.csv \
     --map output/NC_2020_root_map.csv \
-        help="Path to the output map.csv",
-        type=str,
     --candidates output/NC_2020_root_candidates.json \
     --scores output/NC_2020_root_scores.csv \
-    --log output/NC_2020_root_log.txt"
+    --log output/NC_2020_root_log.txt
 
 For documentation, type:
 
