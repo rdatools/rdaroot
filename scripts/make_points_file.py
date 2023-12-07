@@ -19,7 +19,7 @@ from argparse import ArgumentParser, Namespace
 
 from typing import Any, List, Dict
 
-from rdabase import read_csv, read_json, write_csv, geoid_field
+from rdabase import read_csv, read_json, write_csv, Point, index_data, mkPoints
 
 
 def main() -> None:
@@ -34,22 +34,15 @@ def main() -> None:
 
     ### JOIN THEM BY GEOID & SUBSET THE FIELDS ###
 
-    points: List[Dict] = list()
-
-    for row in data:
-        point = dict()
-        geoid: str = str(row[geoid_field])
-
-        point["GEOID"] = geoid
-        point["POP"] = row["TOTAL_POP"]
-        point["X"] = shapes[geoid]["center"][0]
-        point["Y"] = shapes[geoid]["center"][1]
-
-        points.append(point)
+    indexed_data: Dict[str, Dict[str, str | int]] = index_data(data)
+    points: List[Point] = mkPoints(indexed_data, shapes)
 
     ### WRITE THE COMBINED DATA AS A CSV ###
 
-    write_csv(args.points, points, ["GEOID", "POP", "X", "Y"], precision="{:.14f}")
+    csv_dict: List[Dict] = [
+        {"GEOID": p.geoid, "POP": p.pop, "X": p.ll.long, "Y": p.ll.lat} for p in points
+    ]
+    write_csv(args.points, csv_dict, ["GEOID", "POP", "X", "Y"], precision="{:.14f}")
 
 
 def parse_args() -> Namespace:
