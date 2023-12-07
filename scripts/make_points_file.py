@@ -17,10 +17,9 @@ $ scripts/make_points_file.py -h
 import argparse
 from argparse import ArgumentParser, Namespace
 
-import os
 from typing import Any, List, Dict
 
-import rdabase as rdautils
+from rdabase import read_csv, read_json, write_csv, geoid_field
 
 
 def main() -> None:
@@ -28,19 +27,10 @@ def main() -> None:
 
     args: Namespace = parse_args()
 
-    data_path: str = os.path.abspath(args.data)
-    shapes_path: str = os.path.abspath(args.shapes)
-    points_path: str = os.path.abspath(args.points)
+    ### READ THE PRECINT DATA & SHAPES ###
 
-    verbose: bool = args.verbose
-
-    ### READ THE PRECINT DATA ###
-
-    data: List[Dict[str, str | int]] = rdautils.read_csv(data_path, [str] + [int] * 13)
-
-    ### READ THE SHAPES DATA ###
-
-    shapes: Dict[str, Any] = rdautils.read_json(shapes_path)
+    data: List[Dict[str, str | int]] = read_csv(args.data, [str] + [int] * 13)
+    shapes: Dict[str, Any] = read_json(args.shapes)
 
     ### JOIN THEM BY GEOID & SUBSET THE FIELDS ###
 
@@ -48,7 +38,7 @@ def main() -> None:
 
     for row in data:
         point = dict()
-        geoid: str = str(row[rdautils.geoid_field])
+        geoid: str = str(row[geoid_field])
 
         point["GEOID"] = geoid
         point["POP"] = row["TOTAL_POP"]
@@ -59,9 +49,7 @@ def main() -> None:
 
     ### WRITE THE COMBINED DATA AS A CSV ###
 
-    rdautils.write_csv(
-        points_path, points, ["GEOID", "POP", "X", "Y"], precision="{:.14f}"
-    )
+    write_csv(args.points, points, ["GEOID", "POP", "X", "Y"], precision="{:.14f}")
 
 
 def parse_args() -> Namespace:
@@ -89,10 +77,6 @@ def parse_args() -> Namespace:
         default="temp/NC_2020_points.csv",
         help="Path to the output points.csv",
         type=str,
-    )
-
-    parser.add_argument(
-        "-v", "--verbose", dest="verbose", action="store_true", help="Verbose mode"
     )
 
     args: Namespace = parser.parse_args()
