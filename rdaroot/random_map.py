@@ -7,14 +7,14 @@ He wrote most of the code which I only lightly edited to make it work in this co
 """
 
 import random
-from typing import List, Dict, Optional
 
-from .balzerio import Redistricting_Assignment, write_redistricting_assignment
+from typing import List, Dict, Tuple, Set, Optional
+
+from .balzerio import Assignment, write_redistricting_assignment
 
 
-# @rdautils.time_function
 def random_map(
-    adjacencies: List[tuple[str, str]],
+    adjacencies: List[Tuple[str, str]],
     populations: Dict[str, int],
     N: int,
     seed: int,
@@ -33,7 +33,7 @@ def random_map(
     root: Node
 
     while True:
-        tbc: set[str] = set(populations.keys())
+        tbc: Set[str] = set(populations.keys())
         district: int = 1
         assignments: Dict[str, int] = {}
         tree_pops: Dict[str, int]
@@ -117,9 +117,8 @@ def random_map(
         )
 
     # Convert the assignments (dict) into a plan & write it to a CSV.
-    plan: List[Redistricting_Assignment] = [
-        Redistricting_Assignment(geoid, district - 1)
-        for geoid, district in assignments.items()
+    plan: List[Assignment] = [
+        Assignment(geoid, district - 1) for geoid, district in assignments.items()
     ]
     write_redistricting_assignment(initial_csv, plan)
 
@@ -171,7 +170,7 @@ def RandomTreeRoot(units: List[Node], r: Node):
 
 
 def Create(
-    tbc: set[str],
+    tbc: Set[str],
     adjacencies: List[tuple[str, str]],
     populations: Dict[str, int],
 ) -> Node:
@@ -186,7 +185,7 @@ def Create(
 
 
 def mklists(
-    tbc: set[str],
+    tbc: Set[str],
     adjacencies: List[tuple[str, str]],
     populations: Dict[str, int],
 ) -> List[Node]:
@@ -230,7 +229,7 @@ def tree_populations(root: Node, populations: Dict[str, int]) -> Dict[str, int]:
 
 
 def assign_district(
-    root: Node, district: int, tbc: set[str], assignments: Dict[str, int]
+    root: Node, district: int, tbc: Set[str], assignments: Dict[str, int]
 ):
     assert root.id not in assignments
     assignments[root.id] = district
