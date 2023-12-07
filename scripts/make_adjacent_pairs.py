@@ -17,10 +17,9 @@ $ scripts/make_adjacent_pairs.py -h
 import argparse
 from argparse import ArgumentParser, Namespace
 
-import os
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
-import rdabase as rdautils
+from rdabase import read_json, Graph, mkAdjacencies
 
 
 def main() -> None:
@@ -28,27 +27,20 @@ def main() -> None:
 
     args: Namespace = parse_args()
 
-    graph_path: str = os.path.abspath(args.graph)
-    pairs_path: str = os.path.abspath(args.pairs)
-
-    verbose: bool = args.verbose
-
     ### READ THE GRAPH JSON ###
 
-    graph_data: Dict[str, List[str]] = rdautils.read_json(graph_path)
+    graph_data: Dict[str, List[str]] = read_json(args.graph)
 
     ### CONVERT IT TO PAIRS OF ADJACENT PRECINCTS ###
 
-    graph: rdautils.Graph = rdautils.Graph(graph_data)
+    graph: Graph = Graph(graph_data)
+    adjacencies: List[Tuple[str, str]] = mkAdjacencies(graph)
 
-    abs_path: str = rdautils.FileSpec(pairs_path).abs_path
+    # abs_path: str = FileSpec(args.pairs).abs_path
 
-    with open(abs_path, "w") as f:
-        for one, two in graph.adjacencies():
-            if one != "OUT_OF_STATE" and two != "OUT_OF_STATE":
-                print(f"{one},{two}", file=f)
-
-    pass
+    with open(args.pairs, "w") as f:
+        for one, two in adjacencies:
+            print(f"{one},{two}", file=f)
 
 
 def parse_args() -> Namespace:
@@ -59,20 +51,16 @@ def parse_args() -> Namespace:
     parser.add_argument(
         "-g",
         "--graph",
-        default="../rdabase/data/NC/NC_2020_graph.json",
+        required=True,
         help="Path to the input graph.json",
         type=str,
     )
     parser.add_argument(
         "-p",
         "--pairs",
-        default="temp/NC_2020_adjacencies.csv",
+        required=True,
         help="Path to the output adjacencies.csv",
         type=str,
-    )
-
-    parser.add_argument(
-        "-v", "--verbose", dest="verbose", action="store_true", help="Verbose mode"
     )
 
     args: Namespace = parser.parse_args()
