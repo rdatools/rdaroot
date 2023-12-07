@@ -10,6 +10,7 @@ NOTE - This should closely approximate our original 'baseline' approach.
 
 For example:
 
+TODO 
 $ scripts/root_map_heuristic_2.py -s NC -p temp/NC_2020_points.csv -a temp/NC_2020_adjacencies.csv
 $ scripts/root_map_heuristic_2.py -s NC -p temp/NC_2020_points.csv -a temp/NC_2020_adjacencies.csv -q
 $ scripts/root_map_heuristic_2.py -s NC -p temp/NC_2020_points.csv -a temp/NC_2020_adjacencies.csv -q -u
@@ -22,7 +23,6 @@ $ scripts/root_map_heuristic_2.py -h
 
 import argparse
 from argparse import ArgumentParser, Namespace
-
 from typing import Any, List, Dict, Tuple
 
 import os
@@ -32,6 +32,8 @@ from rdabase import (
     cycle,
     DISTRICTS_BY_STATE,
     starting_seed,
+    populations,
+    total_population,
     write_csv,
     write_json,
     Point,
@@ -79,59 +81,29 @@ def main() -> None:
 
     args: Namespace = parse_args()
 
-    xx: str = args.xx
-    precincts: str = args.points
-    adjacencies: str = args.adjacencies
-    iterations: int = args.iterations
-    unsimplified: bool = args.unsimplified
-    qualify: bool = args.qualify
+    ### SETUP FOR SCORING ###
 
-    verbose: bool = args.verbose
-
-    ### DEBUG ###
+    data: Dict[str, Dict[str, int | str]] = load_data(args.data)
+    shapes: Dict[str, Any] = load_shapes(args.shapes)
+    # graph_data: Dict[str, list[str]] = load_graph(args.graph)
+    metadata: Dict[str, Any] = load_metadata(args.state, args.data)
 
     ### SETUP FOR ITERATIONS ###
 
-    qualifier: str = (
-        f"_{iterations}_heuristic2_{'unsimplified' if unsimplified else 'simplified'}"
-        if qualify
-        else ""
-    )
-    root_map: str = "output/" + f"{xx}_{cycle}_root_map" + qualifier + ".csv"
-    root_scores: str = "output/" + f"{xx}_{cycle}_root_scores" + qualifier + ".csv"
-    root_candidates: str = (
-        "output/" + f"{xx}_{cycle}_root_candidates" + qualifier + ".json"
-    )
-    root_log: str = "output/" + f"{xx}_{cycle}_root_log" + qualifier + ".txt"
+    clean(file_list)
 
-    N: int = DISTRICTS_BY_STATE[xx]["congress"]
-    start: int = starting_seed(xx, N)
+    N: int = DISTRICTS_BY_STATE[args.state]["congress"]
+    start: int = starting_seed(args.state, N)
 
-    # Read the input points & adjacencies & index them by GEOID offset.
-    points_csv: str = os.path.abspath(precincts)
-    adjacencies_csv: str = os.path.abspath(adjacencies)
-    if unsimplified:  # NOTE - Use unsimplified points & adjacencies.
-        points_csv = os.path.abspath("testdata/NC/baseline.data.input.csv")
-        adjacencies_csv = os.path.abspath("testdata/NC/baseline.adjacencies.input.csv")
-    points: List[Point] = read_redistricting_points(points_csv)
-    pairs: List[Tuple[str, str]] = read_redistricting_pairs(adjacencies_csv)
-    index_points_file(points, dccvt_points, verbose=verbose)
-    index_pairs_file(points, pairs, dccvt_adjacencies, verbose=verbose)
+    points: List[Point] = read_redistricting_points(args.points)  # must exist
+    pairs: List[Tuple[str, str]] = read_redistricting_pairs(args.adjacencies)  # ditto
+    index_points_file(points, dccvt_points, verbose=args.verbose)
+    index_pairs_file(points, pairs, dccvt_adjacencies, verbose=args.verbose)
 
-    # Gather populations by GEOID for energy calculations.
-    populations: Dict[str, int] = {p.geoid: int(p.pop) for p in points}
-    total_pop: int = sum(populations.values())
+    pop_by_geoid: Dict[str, int] = populations(data)
+    total_pop: int = total_population(pop_by_geoid)
 
-    ### SETUP FOR SCORING ###
-
-    data_path: str = f"../rdabase/data/{xx}/{xx}_2020_data.csv"
-    shapes_path: str = f"../rdabase/data/{xx}/{xx}_2020_shapes_simplified.json"
-    graph_path: str = f"../rdabase/data/{xx}/{xx}_2020_graph.json"
-
-    data: Dict[str, Dict[str, str | int]] = load_data(data_path)
-    shapes: Dict[str, Any] = load_shapes(shapes_path)
-    graph: Dict[str, List[str]] = load_graph(graph_path)
-    metadata: Dict[str, Any] = load_metadata(xx, data_path)
+    # HERE
 
     ### LOOP FOR THE SPECIFIED NUMBER OF CONFORMING CANDIDATES ###
 
@@ -256,24 +228,63 @@ def parse_args() -> Namespace:
     )
 
     parser.add_argument(
-        "-s",
-        "--xx",
+        "--state",
         default="NC",
         help="The two-character state code (e.g., NC)",
         type=str,
     )
     parser.add_argument(
-        "-p",
+        "--data",
+        type=str,
+        default="../rdadata/data/NC/NC_2020_data.csv",
+        help="Data file",
+    )
+    parser.add_argument(
+        "--shapes",
+        type=str,
+        default="../rdadata/data/NC/NC_2020_shapes_simplified.json",
+        help="Shapes abstract file",
+    )
+    parser.add_argument(
+        "--graph",
+        type=str,
+        default="../rdadata/data/NC/NC_2020_graph.json",
+        help="Graph file",
+    )
+    parser.add_argument(
         "--points",
         default="temp/NC_2020_points.csv",
         help="Path to the input points.csv",
         type=str,
     )
     parser.add_argument(
-        "-a",
         "--adjacencies",
         default="temp/NC_2020_adjacencies.csv",
         help="Path to the input adjacencies.csv",
+        type=str,
+    )
+    parser.add_argument(
+        "--map",
+        default="output/NC_2020_root_map.csv",
+        help="Path to the output map.csv",
+        type=str,
+    )
+    parser.add_argument(
+        "--candidates",
+        default="output/NC_2020_root_candidates.json",
+        help="Path to the output candidates.json",
+        type=str,
+    )
+    parser.add_argument(
+        "--scores",
+        default="output/NC_2020_root_scores.csv",
+        help="Path to the output scores.csv",
+        type=str,
+    )
+    parser.add_argument(
+        "--log",
+        default="output/NC_2020_root_log.txt",
+        help="Path to the output log.txt",
         type=str,
     )
     parser.add_argument(
@@ -289,20 +300,21 @@ def parse_args() -> Namespace:
         default=0.02,
         help="'Roughly equal' population threshold",
     )
-    parser.add_argument(
-        "-u",
-        "--unsimplified",
-        dest="unsimplified",
-        action="store_true",
-        help="Use unsimplified points & adjacencies",
-    )
-    parser.add_argument(
-        "-q",
-        "--qualify",
-        dest="qualify",
-        action="store_true",
-        help="Qualify the outputs",
-    )
+    # TODO - DELETE
+    # parser.add_argument(
+    #     "-u",
+    #     "--unsimplified",
+    #     dest="unsimplified",
+    #     action="store_true",
+    #     help="Use unsimplified points & adjacencies",
+    # )
+    # parser.add_argument(
+    #     "-q",
+    #     "--qualify",
+    #     dest="qualify",
+    #     action="store_true",
+    #     help="Qualify the outputs",
+    # )
 
     parser.add_argument(
         "-v", "--verbose", dest="verbose", action="store_true", help="Verbose mode"
