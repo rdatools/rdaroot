@@ -1,0 +1,13 @@
+Conforming count: 0, random seed: 518
+Failure: Too many attempts for seed (518)
+Conforming count: 0, random seed: 519
+Conforming count: 1, random seed: 520
+Conforming count: 2, random seed: 521
+Conforming count: 3, random seed: 522
+Conforming count: 4, random seed: 523
+Conforming count: 5, random seed: 524
+Conforming count: 6, random seed: 525
+Conforming count: 7, random seed: 526
+Conforming count: 8, random seed: 527
+Conforming count: 9, random seed: 528
+10 conforming candidates took 12 random seeds.
