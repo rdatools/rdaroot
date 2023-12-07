@@ -6,7 +6,7 @@ MAKE A POINTS CSV FILE
 
 For example:
 
-$ scripts/make_points_file.py -d ../rdadata/data/NC/NC_2020_data.csv -s ../rdadata/data/NC/NC_2020_shapes_simplified.json -p temp/NC_2020_points.csv
+$ scripts/make_points_file.py -d ../rdabase/data/NC/NC_2020_data.csv -s ../rdabase/data/NC/NC_2020_shapes_simplified.json -p temp/NC_2020_points.csv
 
 For documentation, type:
 
@@ -20,7 +20,7 @@ from argparse import ArgumentParser, Namespace
 import os
 from typing import Any, List, Dict
 
-import rdadata as rdautils
+import rdabase as rdautils
 
 
 def main() -> None:
@@ -72,14 +72,14 @@ def parse_args() -> Namespace:
     parser.add_argument(
         "-d",
         "--data",
-        default="../rdadata/data/NC/NC_2020_data.csv",
+        default="../rdabase/data/NC/NC_2020_data.csv",
         help="Path to the input data.csv",
         type=str,
     )
     parser.add_argument(
         "-s",
         "--shapes",
-        default="../rdadata/data/NC/NC_2020_shapes_simplified.json",
+        default="../rdabase/data/NC/NC_2020_shapes_simplified.json",
         help="Path to the input shapes.json",
         type=str,
     )

@@ -26,8 +26,16 @@ from typing import Any, List, Dict, Tuple, Set
 
 import os
 
-from rdadata import cycle, DISTRICTS_BY_STATE, starting_seed, write_csv, write_json
-from rdafn import (
+from rdabase import (
+    cycle,
+    DISTRICTS_BY_STATE,
+    starting_seed,
+    write_csv,
+    write_json,
+    Point,
+    Assignment,
+)
+from rdascore import (
     load_data,
     load_shapes,
     load_graph,
@@ -41,15 +49,14 @@ from rdaroot import (
     dccvt_points,
     file_list,
     clean,
-    Redistricting_Point,
     read_redistricting_points,
     read_redistricting_pairs,
     index_points_file,
     index_pairs_file,
     index_assignments_file,
     random_map,
-    calc_energy,
-    calc_population_deviation,
+    calc_energy_file,
+    calc_population_deviation_file,
 )
 
 
@@ -85,7 +92,7 @@ def main() -> None:
     if unsimplified:  # NOTE - Use unsimplified points & adjacencies.
         points_csv = os.path.abspath("testdata/NC/baseline.data.input.csv")
         adjacencies_csv = os.path.abspath("testdata/NC/baseline.adjacencies.input.csv")
-    points: List[Redistricting_Point] = read_redistricting_points(points_csv)
+    points: List[Point] = read_redistricting_points(points_csv)
     pairs: List[Tuple[str, str]] = read_redistricting_pairs(adjacencies_csv)
     index_points_file(points, dccvt_points, verbose=verbose)
     # index_pairs_file(points, pairs, dccvt_adjacencies, verbose=verbose)
@@ -93,13 +100,13 @@ def main() -> None:
     # Gather populations by GEOID for energy calculations & offset them by GEOID for indexing initial assignments.
     populations: Dict[str, int] = {p.geoid: int(p.pop) for p in points}
     total_pop: int = sum(populations.values())
-    index_by_geoid: Dict[str, int] = {p.geoid: i for i, p in enumerate(points)}
+    index_by_geoid: Dict[str, int] = {p.geoid: i for i, p in enumerate(points)}  # TODO
 
     ### SETUP FOR SCORING ###
 
-    data_path: str = f"../rdadata/data/{xx}/{xx}_2020_data.csv"
-    shapes_path: str = f"../rdadata/data/{xx}/{xx}_2020_shapes_simplified.json"
-    graph_path: str = f"../rdadata/data/{xx}/{xx}_2020_graph.json"
+    data_path: str = f"../rdabase/data/{xx}/{xx}_2020_data.csv"
+    shapes_path: str = f"../rdabase/data/{xx}/{xx}_2020_shapes_simplified.json"
+    graph_path: str = f"../rdabase/data/{xx}/{xx}_2020_graph.json"
 
     data: Dict[str, Dict[str, str | int]] = load_data(data_path)
     shapes: Dict[str, Any] = load_shapes(shapes_path)
@@ -109,7 +116,7 @@ def main() -> None:
     ### LOOP FOR THE SPECIFIED NUMBER OF CONFORMING CANDIDATES ###
 
     scores: List[Dict[str, Any]] = list()
-    candidates: List[Dict[str, str | float | Dict[str, int]]] = list()
+    candidates: List[Dict[str, str | float | Dict[str, int | str]]] = list()
 
     conforming_count: int = 0
     seed: int = start
@@ -141,8 +148,8 @@ def main() -> None:
                 )
 
                 # Calculate the energy & population deviation of the map.
-                energy: float = calc_energy(dccvt_initial, dccvt_points)
-                popdev: float = calc_population_deviation(
+                energy: float = calc_energy_file(dccvt_initial, dccvt_points)
+                popdev: float = calc_population_deviation_file(
                     dccvt_randommap, populations, total_pop, N
                 )
 
@@ -152,11 +159,12 @@ def main() -> None:
 
                 # Otherwise increment candidate count, save the plan, & score it.
                 conforming_count += 1
-                assignments: List[Dict[str, str | int]] = load_plan(dccvt_randommap)
+                assignments: List[Assignment] = load_plan(dccvt_randommap)
 
-                plan: Dict[str, int] = {
-                    str(a["GEOID"]): int(a["DISTRICT"]) for a in assignments
-                }
+                plan: Dict[str, int | str] = {a.geoid: a.district for a in assignments}
+                # plan: Dict[str, int] = {
+                #     str(a["GEOID"]): int(a["DISTRICT"]) for a in assignments
+                # }
                 candidates.append({"name": label, "plan": plan})  # No weights.
 
                 record: Dict[str, Any] = dict()

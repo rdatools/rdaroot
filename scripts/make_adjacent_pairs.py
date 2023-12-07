@@ -6,7 +6,7 @@ CONVERT A GRAPH JSON TO AN ADJACENT PAIRS CSV
 
 For example:
 
-$ scripts/make_adjacent_pairs.py -g ../rdadata/data/NC/NC_2020_graph.json -p temp/NC_2020_adjacencies.csv
+$ scripts/make_adjacent_pairs.py -g ../rdabase/data/NC/NC_2020_graph.json -p temp/NC_2020_adjacencies.csv
 
 For documentation, type:
 
@@ -20,7 +20,7 @@ from argparse import ArgumentParser, Namespace
 import os
 from typing import List, Dict
 
-import rdadata as rdautils
+import rdabase as rdautils
 
 
 def main() -> None:
@@ -59,7 +59,7 @@ def parse_args() -> Namespace:
     parser.add_argument(
         "-g",
         "--graph",
-        default="../rdadata/data/NC/NC_2020_graph.json",
+        default="../rdabase/data/NC/NC_2020_graph.json",
         help="Path to the input graph.json",
         type=str,
     )

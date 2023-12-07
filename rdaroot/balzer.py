@@ -16,25 +16,28 @@ import heapq
 
 from typing import Any, List, Dict, Tuple, Set, Optional, DefaultDict, NamedTuple
 
-import rdadata as rdadata
-from rdafn import load_plan
-
-from .union_find import StrUnionFind, IntUnionFind
-from .balzerio import (
+from rdabase import (
     LatLong,
     Point,
     Assignment,
-    Redistricting_Point,
-    Redistricting_Assignment,
-    # get_GEOID,
-    # get_DISTRICT,
+    IndexedPoint,
+    Assignment,
+    IndexedWeightedAssignment,
+    index_points,
+    index_pairs,
+    index_assignments,
+    calc_energy,
+    calc_population_deviation,
+)
+from rdascore import load_plan
+
+from .union_find import StrUnionFind, IntUnionFind
+from .balzerio import (
     read_redistricting_points,
-    # read_redistricting_pairs,
     write_latlongs,
     read_latlongs,
     read_points,
     write_points,
-    # read_redistricting_assignment,
     write_redistricting_assignment,
     read_assignments,
     write_assignments,
@@ -47,7 +50,7 @@ from .balzerio import (
 
 
 def index_points_file(
-    points: List[Redistricting_Point],
+    points: List[Point],
     output: str,
     epsilon: float = 0.01,
     *,
@@ -55,35 +58,13 @@ def index_points_file(
 ):
     """MODIFIED to take points already read in."""
 
-    # TODO - Rationalize this
-    raw_points: List[Dict[str, Any]] = [
-        {"GEOID": p.geoid, "POP": p.pop, "X": p.ll.lat, "Y": p.ll.long} for p in points
-    ]
-    ps: List[Point] = rdadata.index_points(raw_points, epsilon)
+    ps: List[IndexedPoint] = index_points(points, epsilon)
 
     write_points(ps, output)
 
 
-# TODO - DELETE
-# def index_points_file(
-#     points: List[Redistricting_Point],
-#     output: str,
-#     epsilon: float = 0.01,
-#     *,
-#     verbose: bool = False,
-# ):
-#     """MODIFIED to take points already read in."""
-
-#     ps: List[Point] = [Point(p.ll, max(epsilon, p.pop)) for p in points]
-
-#     assert epsilon > 0 or sum(p.pop for p in ps) == sum(p.pop for p in points)
-
-#     write_points(ps, output)
-
-
-# Accept
 def index_pairs_file(
-    points: List[Redistricting_Point],
+    points: List[Point],
     pairs: List[Tuple[str, str]],
     output: str,
     *,
@@ -91,37 +72,10 @@ def index_pairs_file(
 ):
     """MODIFIED to take points & pairs already read in."""
 
-    # TODO - Rationalize this
-    raw_points: List[Dict[str, Any]] = [
-        {"GEOID": p.geoid, "POP": p.pop, "X": p.ll.lat, "Y": p.ll.long} for p in points
-    ]
     offset_by_geoid: Dict[str, int] = {p.geoid: i for i, p in enumerate(points)}
-    adjacent_pairs: List[Tuple[int, int]] = rdadata.index_pairs(offset_by_geoid, pairs)
+    adjacent_pairs: List[Tuple[int, int]] = index_pairs(offset_by_geoid, pairs)
 
     write_adjacent_pairs(output, adjacent_pairs)
-
-
-# TODO - DELETE
-# def index_pairs_file(
-#     points: List[Redistricting_Point],
-#     pairs: List[Tuple[str, str]],
-#     output: str,
-#     *,
-#     verbose: bool = False,
-# ):
-#     """MODIFIED to take points & pairs already read in."""
-
-#     mapping: Dict[str, int] = {p.geoid: i for i, p in enumerate(points)}
-#     pairs = [
-#         (p1, p2) for p1, p2 in pairs if p1 != "OUT_OF_STATE" and p2 != "OUT_OF_STATE"
-#     ]
-#     adjacent_pairs: List[Tuple[int, int]] = [
-#         (mapping[p1], mapping[p2]) for p1, p2 in pairs
-#     ]
-
-#     geoids: Set[str] = set(p.geoid for p in points)
-#     report_disconnect(pairs, geoids, "all points", verbose)
-#     write_adjacent_pairs(output, adjacent_pairs)
 
 
 def index_assignments_file(
@@ -132,70 +86,31 @@ def index_assignments_file(
     *,
     verbose: bool = False,
 ):
-    """ADDED: Index the initial assignments
+    """Index the initial assignments"""
 
-    - mapping is the mapping from GEOID to index offset.
-    - pop_by_geoid is the mapping from GEOID to population.
+    plan: List[Assignment] = load_plan(assignname)
 
-    """
-
-    # TODO - Rationalize this
-    # redistricting_assignments: List[
-    #     Redistricting_Assignment
-    # ] = read_redistricting_assignment(assignname)
-    plan: List[Dict[str, str | int]] = load_plan(assignname)
-
-    assigns: List[Assignment] = rdadata.index_assignments(
+    assigns: List[IndexedWeightedAssignment] = index_assignments(
         plan, offset_by_geoid, pop_by_geoid
     )
 
     write_assignments(output, assigns)
 
 
-# TODO - DELETE
-# def index_assignments_file(
-#     assignname: str,
-#     mapping: Dict[str, int],
-#     pop_by_geoid: Dict[str, int],
-#     output: str,
-#     *,
-#     verbose: bool = False,
-# ):
-#     """ADDED: Index the initial assignments
-
-#     - mapping is the mapping from GEOID to index offset.
-#     - pop_by_geoid is the mapping from GEOID to population.
-
-#     """
-
-#     redistricting_assignments: List[
-#         Redistricting_Assignment
-#     ] = read_redistricting_assignment(assignname)
-
-#     assigns: List[Assignment] = list()
-#     for p in redistricting_assignments:
-#         indexed: Assignment = Assignment(
-#             site=int(p.district) - 1,  # Assume 1-N districts for simplicity
-#             point=mapping[p.geoid],
-#             pop=float(pop_by_geoid[p.geoid]),
-#         )
-#         assigns.append(indexed)
-
-#     write_assignments(output, assigns)
-
-
 def randomsites(input: str, output: str, N: int, seed: int):
     random.seed(seed)
-    points: List[Point] = read_points(input)
-    sample: List[Point] = random.sample(list(set(points)), N)  # set to avoid duplicates
+    points: List[IndexedPoint] = read_points(input)
+    sample: List[IndexedPoint] = random.sample(
+        list(set(points)), N
+    )  # set to avoid duplicates
     sites: List[LatLong] = [p.ll for p in sample]
     write_latlongs(sites, output)
 
 
 def initial(sitename: str, pointname: str, output: str):
     sites: List[LatLong] = read_latlongs(sitename)
-    points: List[Point] = read_points(pointname)
-    assigns: List[Assignment] = get_initial(sites, points)
+    points: List[IndexedPoint] = read_points(pointname)
+    assigns: List[IndexedWeightedAssignment] = get_initial(sites, points)
 
     start: List[float] = [p.pop for p in points]
     for a in assigns:
@@ -206,11 +121,11 @@ def initial(sitename: str, pointname: str, output: str):
 
 
 def mk_contiguous(assignname: str, adjacentname: str, output: str) -> None:
-    assignments: List[Assignment] = read_assignments(assignname)
+    assignments: List[IndexedWeightedAssignment] = read_assignments(assignname)
     adjacents = read_adjacencies(adjacentname)
 
     check_connected(assignments, adjacents)
-    contig: List[Assignment] = get_contiguous(assignments, adjacents)
+    contig: List[IndexedWeightedAssignment] = get_contiguous(assignments, adjacents)
     check_connected(contig, adjacents)
 
     start: DefaultDict[int, float] = defaultdict(float)
@@ -254,9 +169,9 @@ def consolidate(
     *,
     verbose: bool = False,
 ) -> None:
-    assignments: List[Assignment] = read_assignments(assignname)
+    assignments: List[IndexedWeightedAssignment] = read_assignments(assignname)
     adjacents = read_adjacencies(adjacentname)
-    consolidated: List[Assignment] = get_consolidated(
+    consolidated: List[IndexedWeightedAssignment] = get_consolidated(
         assignments, adjacents, label, verbose
     )
     start: DefaultDict[int, float] = defaultdict(float)
@@ -289,11 +204,13 @@ def complete(
     *,
     verbose: bool = False,
 ) -> None:
-    assignments: List[Assignment] = read_assignments(assignname)
+    assignments: List[IndexedWeightedAssignment] = read_assignments(assignname)
     adjacents = read_adjacencies(adjacentname)
     points = read_points(pointsname)
 
-    assigns: List[Assignment] = get_complete(assignments, adjacents, points, verbose)
+    assigns: List[IndexedWeightedAssignment] = get_complete(
+        assignments, adjacents, points, verbose
+    )
     write_assignments(output, assigns)
 
 
@@ -304,13 +221,11 @@ def postprocess(
     *,
     verbose: bool = False,
 ) -> None:
-    assignments: List[Assignment] = read_assignments(input)
-    redistricting_points: List[Redistricting_Point] = read_redistricting_points(
-        redistricting_input
+    assignments: List[IndexedWeightedAssignment] = read_assignments(input)
+    redistricting_points: List[Point] = read_redistricting_points(redistricting_input)
+    redistricting_assignments: List[Assignment] = get_redistricting_assignments(
+        assignments, redistricting_points
     )
-    redistricting_assignments: List[
-        Redistricting_Assignment
-    ] = get_redistricting_assignments(assignments, redistricting_points)
 
     inpoints: Set[int] = set(a.point for a in assignments)
     outpoints: Set[str] = set(a.geoid for a in redistricting_assignments)
@@ -345,7 +260,9 @@ def report_disconnect(
             )
 
 
-def get_initial(sites: List[LatLong], points: List[Point]) -> List[Assignment]:
+def get_initial(
+    sites: List[LatLong], points: List[IndexedPoint]
+) -> List[IndexedWeightedAssignment]:
     class Unflattened_Assignment(NamedTuple):
         site: LatLong
         point_index: int
@@ -366,7 +283,7 @@ def get_initial(sites: List[LatLong], points: List[Point]) -> List[Assignment]:
         index: int
         s: LatLong
         d, index, s = heapq.heappop(h)
-        p: Point = points[index]
+        p: IndexedPoint = points[index]
         point_remaining: float = p.pop - pop_per_point[index]
         if point_remaining <= 0:
             continue
@@ -380,14 +297,14 @@ def get_initial(sites: List[LatLong], points: List[Point]) -> List[Assignment]:
     initial_sum: float = sum([i.pop for i in initial])
     assert abs(initial_sum - total) < 0.0001, f"{initial_sum} != {total}"
     s2n: Dict[LatLong, int] = {s: i for i, s in enumerate(sites)}
-    assigns: List[Assignment] = [
-        Assignment(s2n[s], index, pop) for s, index, pop in initial
+    assigns: List[IndexedWeightedAssignment] = [
+        IndexedWeightedAssignment(s2n[s], index, pop) for s, index, pop in initial
     ]
     return assigns
 
 
 def check_connected(
-    assignments: List[Assignment], adjacents: List[Tuple[int, int]]
+    assignments: List[IndexedWeightedAssignment], adjacents: List[Tuple[int, int]]
 ) -> None:
     points: Set[int] = {a.point for a in assignments} | {
         p for p1, p2 in adjacents for p in (p1, p2)
@@ -405,8 +322,8 @@ def check_connected(
 
 
 def get_contiguous(
-    assignments: List[Assignment], adjacents: List[Tuple[int, int]]
-) -> List[Assignment]:
+    assignments: List[IndexedWeightedAssignment], adjacents: List[Tuple[int, int]]
+) -> List[IndexedWeightedAssignment]:
     num_sites = max(a.site for a in assignments) + 1
     clusters = count_clusters(assignments, adjacents, True)
     if clusters != count_clusters(assignments, adjacents, False):
@@ -450,15 +367,18 @@ def get_contiguous(
         root: int = ds[p]
         if root not in root2site:
             root2site[root] = len(root2site)
-    assigns = [Assignment(root2site[ds[a.point]], a.point, a.pop) for a in assignments]
+    assigns = [
+        IndexedWeightedAssignment(root2site[ds[a.point]], a.point, a.pop)
+        for a in assignments
+    ]
     return assigns
 
 
 def mindiff(
-    allocations: List[Assignment],
+    allocations: List[IndexedWeightedAssignment],
     adjacents: List[Tuple[int, int]],
     verbose: bool = False,
-) -> List[Assignment]:
+) -> List[IndexedWeightedAssignment]:
     numsites = max(a.site for a in allocations) + 1
     totals: DefaultDict[int, float] = defaultdict(float)
     total: float = 0.0
@@ -477,26 +397,30 @@ def mindiff(
     ]
     for x, y in remove:
         del p2s2amount[x][y]
-    assigned: Dict[int, List[Assignment]] = {}
+    assigned: Dict[int, List[IndexedWeightedAssignment]] = {}
     for p in p2s2amount:
         if len(p2s2amount[p]) > 1:
-            assigned[p] = [Assignment(s, p, p2s2amount[p][s]) for s in p2s2amount[p]]
-    multiple: List[Tuple[int, List[Assignment]]] = list(assigned.items())
+            assigned[p] = [
+                IndexedWeightedAssignment(s, p, p2s2amount[p][s]) for s in p2s2amount[p]
+            ]
+    multiple: List[Tuple[int, List[IndexedWeightedAssignment]]] = list(assigned.items())
 
-    byrisk: List[Tuple[int, List[Assignment]]] = sorted(
+    byrisk: List[Tuple[int, List[IndexedWeightedAssignment]]] = sorted(
         multiple, key=lambda p: max(pop.pop for pop in p[1]), reverse=True
     )
-    adjustments: List[Assignment] = []
+    adjustments: List[IndexedWeightedAssignment] = []
     for _, allocs in byrisk:
         subtotal: float = sum(a.pop for a in allocs)
-        candidates: List[List[Assignment]] = [
+        candidates: List[List[IndexedWeightedAssignment]] = [
             [
-                Assignment(a.site, a.point, -a.pop if i != j else subtotal - a.pop)
+                IndexedWeightedAssignment(
+                    a.site, a.point, -a.pop if i != j else subtotal - a.pop
+                )
                 for j, a in enumerate(allocs)
             ]
             for i in range(len(allocs))
         ]
-        bests: List[List[Assignment]] = sorted(
+        bests: List[List[IndexedWeightedAssignment]] = sorted(
             candidates,
             key=lambda c: max(abs(totals[a.site] + a.pop - ave) for a in c),
         )
@@ -517,7 +441,7 @@ def mindiff(
 
 def count_site_clusters(
     site: int,
-    assignments: List[Assignment],
+    assignments: List[IndexedWeightedAssignment],
     adjacents: List[Tuple[int, int]],
     shared: bool = True,
 ) -> int:
@@ -539,7 +463,7 @@ def count_site_clusters(
 
 
 def count_clusters(
-    assignments: List[Assignment],
+    assignments: List[IndexedWeightedAssignment],
     adjacents: List[Tuple[int, int]],
     shared: bool = True,
 ) -> int:
@@ -551,13 +475,15 @@ def count_clusters(
 
 
 def get_consolidated(
-    assignments: List[Assignment],
+    assignments: List[IndexedWeightedAssignment],
     adjacents: List[Tuple[int, int]],
     label: str,
     verbose: bool = False,
-) -> List[Assignment]:
+) -> List[IndexedWeightedAssignment]:
     clusters: int = count_clusters(assignments, adjacents)
-    adjustments: List[Assignment] = mindiff(assignments, adjacents, verbose)
+    adjustments: List[IndexedWeightedAssignment] = mindiff(
+        assignments, adjacents, verbose
+    )
     clusters2 = count_clusters(assignments + adjustments, adjacents)
     if clusters != clusters2:
         if verbose:
@@ -571,10 +497,10 @@ def get_consolidated(
             p2s[a.point] = defaultdict(float)
         p2s[a.point][a.site] += a.pop
 
-    consolidated: List[Assignment] = []
+    consolidated: List[IndexedWeightedAssignment] = []
     for p in p2s:
         site = max(p2s[p].items(), key=lambda x: x[1])[0]
-        consolidated.append(Assignment(site, p, p2s[p][site]))
+        consolidated.append(IndexedWeightedAssignment(site, p, p2s[p][site]))
     numsites: int = max(a.site for a in consolidated) + 1
     clusters3 = count_clusters(consolidated, adjacents)
     if numsites == clusters3:
@@ -589,11 +515,11 @@ def get_consolidated(
 
 
 def get_complete(
-    assigns: List[Assignment],
+    assigns: List[IndexedWeightedAssignment],
     adjacents: List[Tuple[int, int]],
-    points: List[Point],
+    points: List[IndexedPoint],
     verbose: bool = False,
-) -> List[Assignment]:
+) -> List[IndexedWeightedAssignment]:
     p2s: Dict[int, int] = {}
     for a in assigns:
         assert a.point not in p2s
@@ -602,7 +528,7 @@ def get_complete(
     for p1, p2 in adjacents:
         adj[p1].add(p2)
         adj[p2].add(p1)
-    additional: List[Assignment] = []
+    additional: List[IndexedWeightedAssignment] = []
     for index, p in enumerate(points):
         if index not in p2s:
             assert p.pop == 0
@@ -616,120 +542,55 @@ def get_complete(
                     print("point has no neighbors:", index)
             else:
                 p2s[index] = counter.most_common(1)[0][0]
-                additional.append(Assignment(p2s[index], index, p.pop))
+                additional.append(IndexedWeightedAssignment(p2s[index], index, p.pop))
     return assigns + additional
 
 
 def get_redistricting_assignments(
-    assignments: List[Assignment],
-    redistricting_points: List[Redistricting_Point],
-) -> List[Redistricting_Assignment]:
-    redistricting_dict: Dict[Redistricting_Point, int] = {}
-    p: Redistricting_Point
+    assignments: List[IndexedWeightedAssignment],
+    redistricting_points: List[Point],
+) -> List[Assignment]:
+    redistricting_dict: Dict[Point, int] = {}
+    p: Point
     s: int
     for a in assignments:
         p = redistricting_points[a.point]
         s = a.site
         assert p not in redistricting_dict
         redistricting_dict[p] = s
-    redistricting_assignments: List[Redistricting_Assignment] = []
+    redistricting_assignments: List[Assignment] = []
     for p in redistricting_points:
         if p not in redistricting_dict:
             # should we do something here for unassigned points?
             assert p.pop == 0
             continue
         s = redistricting_dict[p]
-        red_assgin = Redistricting_Assignment(p.geoid, s)
+        red_assgin = Assignment(p.geoid, s)
         redistricting_assignments.append(red_assgin)
     return redistricting_assignments
 
 
-# TODO - DELETE
-# def squared_distance(a: LatLong, b: LatLong) -> float:
-#     return (a.lat - b.lat) * (a.lat - b.lat) + (a.long - b.long) * (a.long - b.long)
-
-
-# def get_centroids(assigns: List[Assignment], points: List[Point]) -> List[LatLong]:
-#     bysite: DefaultDict[int, List[Assignment]] = defaultdict(list)
-#     for a in assigns:
-#         bysite[a.site].append(a)
-#     cs: List[LatLong] = []
-#     top: int = max(s for s in bysite.keys())
-#     for site in range(top + 1):
-#         persite: List[Assignment] = bysite[site]
-#         total: float = sum(a.pop for a in persite)
-#         lat: float = sum(points[a.point].ll.lat * a.pop for a in persite) / total
-#         long: float = sum(points[a.point].ll.long * a.pop for a in persite) / total
-#         cs.append(LatLong(lat, long))
-#     return cs
-
-
-def calc_energy(assignname: str, pointname: str) -> float:
+def calc_energy_file(assignname: str, pointname: str) -> float:
     """Calculate the energy of a map."""
 
-    assignments: List[Assignment] = read_assignments(assignname)
-    points: List[Point] = read_points(pointname)
-    energy: float = rdadata.calc_energy(assignments, points)
+    assignments: List[IndexedWeightedAssignment] = read_assignments(assignname)
+    points: List[IndexedPoint] = read_points(pointname)
+    energy: float = calc_energy(assignments, points)
 
     return energy
 
 
-# TODO - DELETE
-# def calc_energy(assignname: str, pointname: str) -> float:
-#     """Calculate the energy of a map.
-
-#     MODIFIED to return the energy, rather than print it.
-#     """
-
-#     assignments: List[Assignment] = read_assignments(assignname)
-#     points: List[Point] = read_points(pointname)
-#     sites: List[LatLong] = get_centroids(assignments, points)
-#     total: float = sum(
-#         a.pop
-#         * squared_distance(
-#             sites[a.site], points[a.point].ll
-#         )  # not sqrt!!! moment of inertia!
-#         for a in assignments
-#     )
-
-#     return total
-
-
-def calc_population_deviation(
+def calc_population_deviation_file(
     assignname: str, pop_by_geoid: Dict[str, int], total_pop: int, n_districts: int
 ) -> float:
     """Calculate the population deviation of a map."""
 
-    plan: List[Dict[str, str | int]] = load_plan(assignname)
-    deviation: float = rdadata.calc_population_deviation(
+    plan: List[Assignment] = load_plan(assignname)
+    deviation: float = calc_population_deviation(
         plan, pop_by_geoid, total_pop, n_districts
     )
 
     return deviation
-
-
-# TODO - DELETE
-# def calc_population_deviation(
-#     assignname: str, pop_by_geoid: Dict[str, int], total_pop: int, n_districts: int
-# ) -> float:
-#     """ADDED: Calculate the population deviation of a map."""
-
-#     redistricting_assignments: List[
-#         Redistricting_Assignment
-#     ] = read_redistricting_assignment(assignname)
-
-#     pop_by_district: DefaultDict[int | str, int] = defaultdict(int)
-
-#     for p in redistricting_assignments:
-#         pop_by_district[p.district] += pop_by_geoid[p.geoid]
-
-#     max_pop: int = max(pop_by_district.values())
-#     min_pop: int = min(pop_by_district.values())
-#     target_pop: int = int(total_pop / n_districts)
-
-#     deviation: float = rda.calc_population_deviation(max_pop, min_pop, target_pop)
-
-#     return deviation
 
 
 ### END ###

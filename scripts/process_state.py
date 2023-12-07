@@ -34,8 +34,8 @@ def main() -> None:
     #
 
     commands: List[str] = [
-        "scripts/make_points_file.py -d ../rdadata/data/{xx}/{xx}_2020_data.csv -s ../rdadata/data/{xx}/{xx}_2020_shapes_simplified.json -p temp/{xx}_2020_points.csv",
-        "scripts/make_adjacent_pairs.py -g ../rdadata/data/{xx}/{xx}_2020_graph.json -p temp/{xx}_2020_adjacencies.csv",
+        "scripts/make_points_file.py -d ../rdabase/data/{xx}/{xx}_2020_data.csv -s ../rdabase/data/{xx}/{xx}_2020_shapes_simplified.json -p temp/{xx}_2020_points.csv",
+        "scripts/make_adjacent_pairs.py -g ../rdabase/data/{xx}/{xx}_2020_graph.json -p temp/{xx}_2020_adjacencies.csv",
         "scripts/approx_root.py -s {xx} -p temp/{xx}_2020_points.csv -a temp/{xx}_2020_adjacencies.csv",
     ]
 

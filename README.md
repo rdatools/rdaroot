@@ -64,17 +64,17 @@ $ cd rdaroot
 ```
 
 There is no package to install, just command line scripts to run.
-However, you probably want to also clone the [rdadata](https://github.com/alecramsay/rdadata) repository.
+However, you probably want to also clone the [rdabase](https://github.com/alecramsay/rdabase) repository.
 
 ## Usage
 
 First convert precinct population, shape, and adjacency data into the formats expected by the Balzer code.
-The scripts shown below draw data from `rdadata`.
+The scripts shown below draw data from `rdabase`.
 Then run the script to heuristically search for an approximate root map.
 
 ```bash
-scripts/make_points_file.py -d ../rdadata/data/NC/NC_2020_data.csv -s ../rdadata/data/NC/NC_2020_shapes_simplified.json -p temp/NC_2020_points.csv
-scripts/make_adjacent_pairs.py -g ../rdadata/data/NC/NC_2020_graph.json -p temp/NC_2020_adjacencies.csv
+scripts/make_points_file.py -d ../rdabase/data/NC/NC_2020_data.csv -s ../rdabase/data/NC/NC_2020_shapes_simplified.json -p temp/NC_2020_points.csv
+scripts/make_adjacent_pairs.py -g ../rdabase/data/NC/NC_2020_graph.json -p temp/NC_2020_adjacencies.csv
 scripts/approx_root.py -s NC -p temp/NC_2020_points.csv -a temp/NC_2020_adjacencies.csv
 ```
 

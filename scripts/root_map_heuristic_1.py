@@ -25,8 +25,8 @@ from typing import Any, List, Dict, Tuple
 import os
 import shutil
 
-from rdadata import cycle, DISTRICTS_BY_STATE, starting_seed, write_csv, write_json
-from rdafn import (
+from rdabase import cycle, DISTRICTS_BY_STATE, starting_seed, write_csv, write_json
+from rdascore import (
     load_data,
     load_shapes,
     load_graph,
@@ -112,9 +112,9 @@ def main() -> None:
 
     ### SETUP FOR SCORING ###
 
-    data_path: str = f"../rdadata/data/{xx}/{xx}_2020_data.csv"
-    shapes_path: str = f"../rdadata/data/{xx}/{xx}_2020_shapes_simplified.json"
-    graph_path: str = f"../rdadata/data/{xx}/{xx}_2020_graph.json"
+    data_path: str = f"../rdabase/data/{xx}/{xx}_2020_data.csv"
+    shapes_path: str = f"../rdabase/data/{xx}/{xx}_2020_shapes_simplified.json"
+    graph_path: str = f"../rdabase/data/{xx}/{xx}_2020_graph.json"
 
     data: Dict[str, Dict[str, str | int]] = load_data(data_path)
     shapes: Dict[str, Any] = load_shapes(shapes_path)

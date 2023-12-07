@@ -5,14 +5,10 @@ HELPERS - Bits & pieces used by multiple scripts.
 from typing import List
 
 import os
-from rdadata import temp_dir
+from rdabase import temp_dir
 
 
-### WORKING FILES ###
-
-# TODO - DELETE
-# working_dir: str = "temp"
-
+# Balzer working files
 files: List[str] = [
     "dccvt.points.csv",
     "dccvt.adjacencies.csv",
@@ -41,20 +37,6 @@ file_list: List[str] = [f"{temp_dir}/{f}" for f in files]
     dccvt_complete,
     dccvt_output,
 ) = file_list
-
-### CONSTANTS ###
-
-# TODO - DELETE
-# roughly_equal: float = 0.02
-
-### FUNCTIONS ###
-
-# TODO - DELETE
-# def starting_seed(xx: str, N: int, K: int = 1) -> int:
-#     fips: str = rdautils.STATE_FIPS[xx]
-#     start: int = K * N * int(fips)
-
-#     return start
 
 
 def clean(file_list: List[str]) -> None:

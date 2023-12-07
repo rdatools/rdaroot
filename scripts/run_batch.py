@@ -11,7 +11,7 @@ $ scripts/run_batch.py
 
 import os
 
-import rdadata as rdautils
+import rdabase as rdautils
 
 dccvt_py: str = "../dccvt/examples/redistricting"
 

@@ -3,7 +3,6 @@
 from .balzerio import (
     read_redistricting_points,
     read_redistricting_pairs,
-    Redistricting_Point,
 )
 from .helpers import *
 from .random_map import random_map
@@ -18,8 +17,8 @@ from .balzer import (
     consolidate,
     complete,
     postprocess,
-    calc_energy,
-    calc_population_deviation,
+    calc_energy_file,
+    calc_population_deviation_file,
 )
 
 name: str = "rdaroot"

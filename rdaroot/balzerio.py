@@ -8,42 +8,9 @@ Except the additions & modifications noted below, Todd Proebsting wrote this cod
 
 import csv
 
-from typing import Any, Dict, List, Tuple, NamedTuple
+from typing import Any, Dict, List, Tuple
 
-from rdadata import LatLong, Point, Assignment
-
-#
-
-
-# TODO - DELETE
-# class LatLong(NamedTuple):
-#     lat: float
-#     long: float
-
-
-# class Point(NamedTuple):
-#     ll: LatLong
-#     pop: float
-
-
-# class Assignment(NamedTuple):
-#     site: int
-#     point: int
-#     pop: float
-
-
-class Redistricting_Point(NamedTuple):
-    geoid: str
-    pop: float
-    ll: LatLong
-
-
-class Redistricting_Assignment(NamedTuple):
-    geoid: str
-    district: int | str
-
-
-#
+from rdabase import LatLong, Point, IndexedPoint, Assignment, IndexedWeightedAssignment
 
 
 def get_GEOID(row: Dict[str, Any]) -> str:
@@ -63,16 +30,16 @@ def get_DISTRICT(row: Dict[str, Any]) -> str:
 #
 
 
-def read_redistricting_points(input: str) -> List[Redistricting_Point]:
+def read_redistricting_points(input: str) -> List[Point]:
     # read GEOID, POP, X, Y from CSV
-    red_points: List[Redistricting_Point] = []
+    red_points: List[Point] = []
     with open(input, "r") as f:
         reader = csv.DictReader(f)
         geoid = ""
         for row in reader:
             if not geoid:
                 geoid = get_GEOID(row)
-            red_point: Redistricting_Point = Redistricting_Point(
+            red_point: Point = Point(
                 geoid=row[geoid],
                 pop=float(row["POP"]),
                 ll=LatLong(
@@ -119,14 +86,14 @@ def read_latlongs(input: str) -> List[LatLong]:
     return locations
 
 
-def read_points(input: str) -> List[Point]:
-    locations: List[Point] = []
+def read_points(input: str) -> List[IndexedPoint]:
+    locations: List[IndexedPoint] = []
     with open(input, "r") as f:
         locations = []
         reader = csv.reader(f)
         for row in reader:
             pop: float = float(row[2]) if len(row) > 2 else 1.0
-            point: Point = Point(
+            point: IndexedPoint = IndexedPoint(
                 ll=LatLong(lat=float(row[0]), long=float(row[1])),
                 pop=pop,
             )
@@ -134,7 +101,7 @@ def read_points(input: str) -> List[Point]:
     return locations
 
 
-def write_points(points: List[Point], fname: str):
+def write_points(points: List[IndexedPoint], fname: str):
     with open(fname, "w") as f:
         writer = csv.writer(f)
         for point in points:
@@ -144,9 +111,9 @@ def write_points(points: List[Point], fname: str):
 
 def read_redistricting_assignment(
     input: str,
-) -> List[Redistricting_Assignment]:
+) -> List[Assignment]:
     # read GEOID, DISTRICT from CSV
-    red_assigns: List[Redistricting_Assignment] = []
+    red_assigns: List[Assignment] = []
     with open(input, "r") as f:
         reader = csv.DictReader(f)
         geoid = ""
@@ -155,16 +122,14 @@ def read_redistricting_assignment(
             if not geoid:
                 geoid = get_GEOID(row)
                 district = get_DISTRICT(row)
-            red_assign: Redistricting_Assignment = Redistricting_Assignment(
+            red_assign: Assignment = Assignment(
                 geoid=row[geoid], district=int(row[district])
             )
             red_assigns.append(red_assign)
     return red_assigns
 
 
-def write_redistricting_assignment(
-    output: str, assigns: List[Redistricting_Assignment]
-):
+def write_redistricting_assignment(output: str, assigns: List[Assignment]):
     # write GEOID, DISTRICT to CSV
     with open(output, "w") as f:
         # write header
@@ -178,13 +143,13 @@ def write_redistricting_assignment(
             writer.writerow([a.geoid, district])
 
 
-def read_assignments(input: str) -> List[Assignment]:
+def read_assignments(input: str) -> List[IndexedWeightedAssignment]:
     # read site#, point#, pop from CSV
-    allocations: List[Assignment] = []
+    allocations: List[IndexedWeightedAssignment] = []
     with open(input, "r") as f:
         reader = csv.reader(f)
         for row in reader:
-            allocation: Assignment = Assignment(
+            allocation: IndexedWeightedAssignment = IndexedWeightedAssignment(
                 site=int(row[0]),
                 point=int(row[1]),
                 pop=float(row[2]),
@@ -193,7 +158,7 @@ def read_assignments(input: str) -> List[Assignment]:
     return allocations
 
 
-def write_assignments(output: str, assigns: List[Assignment]):
+def write_assignments(output: str, assigns: List[IndexedWeightedAssignment]):
     # write site#, point#, pop to CSV
     with open(output, "w") as f:
         writer = csv.writer(f)
