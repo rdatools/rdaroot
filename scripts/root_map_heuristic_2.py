@@ -11,6 +11,7 @@ For example:
 
 scripts/root_map_heuristic_2.py \
     --state NC \
+    --districts 14 \
     --data ../rdadata/data/NC/NC_2020_data.csv \
     --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
     --graph ../rdadata/data/NC/NC_2020_graph.json \
@@ -42,19 +43,10 @@ def main() -> None:
 
     args: Namespace = parse_args()
 
-    ### SETUP FOR SCORING ###
-
     data: Dict[str, Dict[str, int | str]] = load_data(args.data)
     shapes: Dict[str, Any] = load_shapes(args.shapes)
     graph: Dict[str, list[str]] = load_graph(args.graph)
     metadata: Dict[str, Any] = load_metadata(args.state, args.data)
-
-    ### SETUP FOR ITERATIONS ###
-
-    clean(file_list)
-
-    N: int = DISTRICTS_BY_STATE[args.state]["congress"]
-    start: int = starting_seed(args.state, N)
 
     points: List[Point] = read_redistricting_points(args.points)  # must exist
     pairs: List[Tuple[str, str]] = read_redistricting_pairs(args.adjacencies)  # ditto
@@ -65,14 +57,14 @@ def main() -> None:
     pop_by_geoid: Dict[str, int] = populations(data)
     total_pop: int = total_population(pop_by_geoid)
 
-    ### LOOP FOR THE SPECIFIED NUMBER OF CONFORMING CANDIDATES ###
-
-    lowest_energy: float = float("inf")
+    clean(file_list)
     scores: List[Dict[str, Any]] = list()
     candidates: List[Dict[str, str | float | Dict[str, int | str]]] = list()
 
-    conforming_count: int = 0
+    start: int = starting_seed(args.state, args.districts)
     seed: int = start
+    conforming_count: int = 0
+    lowest_energy: float = float("inf")
 
     with open(args.log, "a") as f:
         while True:
@@ -84,7 +76,7 @@ def main() -> None:
 
             try:
                 # Get random sites from the input points (precincts).
-                randomsites(dccvt_points, dccvt_randomsites, N, seed)
+                randomsites(dccvt_points, dccvt_randomsites, args.districts, seed)
 
                 # Make initial assignments of precincts (points) to districts (sites).
                 initial(dccvt_randomsites, dccvt_points, dccvt_initial)
@@ -134,7 +126,7 @@ def main() -> None:
                 # Calculate the energy & population deviation of the map.
                 energy: float = calc_energy_file(dccvt_complete, dccvt_points)
                 popdev: float = calc_population_deviation_file(
-                    dccvt_output, pop_by_geoid, total_pop, N
+                    dccvt_output, pop_by_geoid, total_pop, args.districts
                 )
 
                 # If the map does not have 'roughly' equal population, discard it.
@@ -183,8 +175,6 @@ def main() -> None:
             file=f,
         )
 
-    ### SAVE THE CANDIDATE MAPS & THEIR SCORES ###
-
     write_json(args.candidates, candidates)
 
     fields: List[str] = list(scores[0].keys())
@@ -200,6 +190,11 @@ def parse_args() -> Namespace:
         "--state",
         help="The two-character state code (e.g., NC)",
         type=str,
+    )
+    parser.add_argument(
+        "--districts",
+        type=int,
+        help="Number of districts",
     )
     parser.add_argument(
         "--data",
@@ -276,6 +271,7 @@ def parse_args() -> Namespace:
     # Default values for args in debug mode
     debug_defaults: Dict[str, Any] = {
         "state": "NC",
+        "districts": 14,
         "data": "../rdadata/data/NC/NC_2020_data.csv",
         "shapes": "../rdadata/data/NC/NC_2020_shapes_simplified.json",
         "graph": "../rdadata/data/NC/NC_2020_graph.json",
