@@ -64,7 +64,7 @@ def main() -> None:
     conforming_count: int = 0
     lowest_energy: float = float("inf")
 
-    with open(args.log, "a") as f:
+    with open(args.log, "w") as f:
         while True:
             print(f"... {conforming_count} ...")
             print(f"Conforming count: {conforming_count}, random seed: {seed}", file=f)
