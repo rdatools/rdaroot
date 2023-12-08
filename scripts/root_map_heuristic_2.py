@@ -48,8 +48,8 @@ def main() -> None:
     graph: Dict[str, list[str]] = load_graph(args.graph)
     metadata: Dict[str, Any] = load_metadata(args.state, args.data)
 
-    points: List[Point] = read_redistricting_points(args.points)  # must exist
-    pairs: List[Tuple[str, str]] = read_redistricting_pairs(args.adjacencies)  # ditto
+    points: List[Point] = mkPoints(data, shapes)
+    pairs: List[Tuple[str, str]] = mkAdjacencies(Graph(graph))
 
     index_points_file(points, dccvt_points, verbose=args.verbose)
     index_pairs_file(points, pairs, dccvt_adjacencies, verbose=args.verbose)

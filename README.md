@@ -34,8 +34,7 @@ Roughly speaking, population-compact districts form a
 
 Elliding I/O details, this is how the heuristic search works:
 
--   We generate a random contiguous map with districts that have 'roughly equal' populations,
-    using spanning trees.
+-   We generate a random contiguous map with districts that have 'roughly equal' populations.
 -   We use those initial precinct-to-district assignments as a starting point for the next step.
 -   We run Balzer\'s 
     [Capacity-Constrained Voronoi Tessellations: Computation and Applications](http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-84645) 
@@ -54,6 +53,11 @@ Elliding I/O details, this is how the heuristic search works:
 We do the above for 100 conforming candidate maps and pick the lowest energy plan.
 That is our approximate root map.
 
+We've implemented two slightly different versions of the above.
+
+1. The first uses spanning trees to generate the initial map (see `root_map_heuristic_1.py`).
+2. The second uses a custom front-end to generate the initial assignments (see `root_map_heuristic_2.py`).
+
 ## Installation
 
 Clone the repository:
@@ -64,26 +68,48 @@ $ cd rdaroot
 ```
 
 There is no package to install, just command line scripts to run.
-However, you probably want to also clone the [rdabase](https://github.com/alecramsay/rdabase) repository.
+However, you probably want to also clone the [rdabase](https://github.com/alecramsay/rdabase) repository
+for the data.
 
 ## Usage
 
-First convert precinct population, shape, and adjacency data into the formats expected by the Balzer code.
-The scripts shown below draw data from `rdabase`.
-Then run the script to heuristically search for an approximate root map.
+There are two scripts to heuristically search for an approximate root map,
+corresponding to the two methods described above.
+These are sample calls:
 
 ```bash
-scripts/make_points_file.py -d ../rdabase/data/NC/NC_2020_data.csv -s ../rdabase/data/NC/NC_2020_shapes_simplified.json -p temp/NC_2020_points.csv
-scripts/make_adjacent_pairs.py -g ../rdabase/data/NC/NC_2020_graph.json -p temp/NC_2020_adjacencies.csv
-scripts/approx_root.py -s NC -p temp/NC_2020_points.csv -a temp/NC_2020_adjacencies.csv
+scripts/root_map_heuristic_1.py \
+    --state NC \
+    --districts 14 \
+    --data ../rdadata/data/NC/NC_2020_data.csv \
+    --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
+    --graph ../rdadata/data/NC/NC_2020_graph.json \
+    --points temp/NC_2020_points.csv \
+    --adjacencies temp/NC_2020_adjacencies.csv \
+    --map output/NC_2020_root_map_1.csv \
+    --candidates output/NC_2020_root_candidates_1.json \
+    --scores output/NC_2020_root_scores_1.csv \
+    --log output/NC_2020_root_log_1.txt \
+    --no-debug
 ```
 
-The `-s NC` flag indicates the state, North Carolina in this example.
-The `-i-` flag (not shown) specifies the number of iterations to run. The default is 100.
+```bash
+scripts/root_map_heuristic_2.py \
+    --state NC \
+    --districts 14 \
+    --data ../rdadata/data/NC/NC_2020_data.csv \
+    --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
+    --graph ../rdadata/data/NC/NC_2020_graph.json \
+    --points temp/NC_2020_points.csv \
+    --adjacencies temp/NC_2020_adjacencies.csv \
+    --map output/NC_2020_root_map_2.csv \
+    --candidates output/NC_2020_root_candidates_2.json \
+    --scores output/NC_2020_root_scores_2.csv \
+    --log output/NC_2020_root_log_2.txt \
+    --no-debug
+```
 
-The resulting map will be in the `maps` directory with a name of the form `NC_2020_root_100.csv`,
-where `2020` is the census cycle and `100` is the number of iterations.
-This precinct-assignment file can be imported into [Dave's Redistricting](https://davesredistricting.org/) (DRA).
+The resulting precinct-assignment files (map) can be imported into [Dave's Redistricting](https://davesredistricting.org/) (DRA).
 
 ## Testing
 
