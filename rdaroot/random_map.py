@@ -10,7 +10,7 @@ import random
 
 from typing import List, Dict, Tuple, Set, Optional
 
-from .balzerio import Assignment, write_redistricting_assignment
+from .balzerio import Assignment, write_redistricting_assignments
 
 
 def random_map(

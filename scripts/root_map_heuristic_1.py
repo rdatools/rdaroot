@@ -71,8 +71,8 @@ def main() -> None:
             print(f"... {conforming_count} ...")
             print(f"Conforming count: {conforming_count}, random seed: {seed}", file=f)
 
-            label: str = f"{conforming_count:03d}_{seed}"
             clean(file_list)
+            label: str = f"{conforming_count:03d}_{seed}"
 
             try:
                 # Generate a random contiguous & 'roughly' equal population partitioning of the state.
@@ -85,24 +85,13 @@ def main() -> None:
                 indexed_assignments: List[
                     IndexedWeightedAssignment
                 ] = index_assignments(assignments, indexed_geoids, pop_by_geoid)
+                write_assignments(dccvt_initial, indexed_assignments)
 
                 # Run Balzer's algorithm (DCCVT) to get balanced & contiguous assignments.
                 balzer_go(
                     dccvt_points,
-                    None,  # NOTE - No adjacencies for the initial run.
-                    dccvt_initial,
-                    dccvt_balzer1,
-                    balance=False,
-                )
-
-                # Make them contiguous but not balanced.
-                mk_contiguous(dccvt_balzer1, dccvt_adjacencies, dccvt_contiguous)
-
-                # Run Balzer's algorithm again to get balanced & contiguous assignments.
-                balzer_go(
-                    dccvt_points,
                     dccvt_adjacencies,
-                    dccvt_contiguous,
+                    dccvt_initial,
                     dccvt_balzer2,
                     balance=True,
                 )
@@ -179,8 +168,6 @@ def main() -> None:
             f"{conforming_count} conforming candidates took {seed - start + 1} random seeds.",
             file=f,
         )
-
-    ### SAVE THE CANDIDATE MAPS & THEIR SCORES ###
 
     write_json(args.candidates, candidates)
 

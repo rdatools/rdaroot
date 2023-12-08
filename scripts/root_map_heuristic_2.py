@@ -79,8 +79,8 @@ def main() -> None:
             print(f"... {conforming_count} ...")
             print(f"Conforming count: {conforming_count}, random seed: {seed}", file=f)
 
-            label: str = f"{conforming_count:03d}_{seed}"
             clean(file_list)
+            label: str = f"{conforming_count:03d}_{seed}"
 
             try:
                 # Get random sites from the input points (precincts).

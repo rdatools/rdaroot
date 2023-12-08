@@ -109,7 +109,7 @@ def write_points(points: List[IndexedPoint], fname: str):
             writer.writerow(row)
 
 
-def read_redistricting_assignment(
+def read_redistricting_assignments(
     input: str,
 ) -> List[Assignment]:
     # read GEOID, DISTRICT from CSV
@@ -129,7 +129,7 @@ def read_redistricting_assignment(
     return red_assigns
 
 
-def write_redistricting_assignment(output: str, assigns: List[Assignment]):
+def write_redistricting_assignments(output: str, assigns: List[Assignment]):
     # write GEOID, DISTRICT to CSV
     with open(output, "w") as f:
         # write header

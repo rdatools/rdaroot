@@ -38,7 +38,7 @@ from .balzerio import (
     read_latlongs,
     read_points,
     write_points,
-    write_redistricting_assignment,
+    write_redistricting_assignments,
     read_assignments,
     write_assignments,
     read_adjacencies,
@@ -230,7 +230,7 @@ def postprocess(
     inpoints: Set[int] = set(a.point for a in assignments)
     outpoints: Set[str] = set(a.geoid for a in redistricting_assignments)
     assert len(inpoints) == len(outpoints)
-    write_redistricting_assignment(output, redistricting_assignments)
+    write_redistricting_assignments(output, redistricting_assignments)
 
 
 ### HELPERS ###

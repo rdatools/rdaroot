@@ -3,6 +3,7 @@
 from .balzerio import (
     read_redistricting_points,
     read_redistricting_pairs,
+    write_assignments,
 )
 from .helpers import *
 from .random_map import random_map
