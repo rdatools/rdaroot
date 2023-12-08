@@ -58,7 +58,8 @@ We've implemented two slightly different versions of the above.
 1. The first uses spanning trees to generate the initial map (see `root_map_heuristic_1.py`).
 2. The second uses a custom front-end to generate the random map (see `root_map_heuristic_2.py`).
 
-We implemented the second initially, before realizing that we could simply use spanning trees to generate the initial map.
+We implemented the second initially, before realizing that we could simply use the 
+conceptually simpler spanning tree approach to generate the initial map.
 They yield similar results. 
 
 ## Installation
