@@ -9,6 +9,7 @@ For example:
 
 scripts/root_map_heuristic_1.py \
     --state NC \
+    --districts 14 \
     --data ../rdadata/data/NC/NC_2020_data.csv \
     --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
     --graph ../rdadata/data/NC/NC_2020_graph.json \
@@ -49,21 +50,18 @@ def main() -> None:
     pairs: List[Tuple[str, str]] = mkAdjacencies(Graph(graph))
 
     indexed_geoids: Dict[str, int] = index_geoids(points)
-    indexed_points: List[IndexedPoint] = index_points(points)
+    # indexed_points: List[IndexedPoint] = index_points(points)
 
     pop_by_geoid: Dict[str, int] = populations(data)
     total_pop: int = total_population(pop_by_geoid)
 
     clean(file_list)
-
-    N: int = DISTRICTS_BY_STATE[args.state]["congress"]
-    start: int = starting_seed(args.state, N)
-
     scores: List[Dict[str, Any]] = list()
     candidates: List[Dict[str, str | float | Dict[str, int | str]]] = list()
 
-    conforming_count: int = 0
+    start: int = starting_seed(args.state, args.districts)
     seed: int = start
+    conforming_count: int = 0
     lowest_energy: float = float("inf")
 
     with open(args.log, "a") as f:
@@ -120,7 +118,7 @@ def main() -> None:
                 # Calculate the energy & population deviation of the map.
                 energy: float = calc_energy_file(dccvt_complete, dccvt_points)
                 popdev: float = calc_population_deviation_file(
-                    dccvt_output, pop_by_geoid, total_pop, N
+                    dccvt_output, pop_by_geoid, total_pop, args.districts
                 )
 
                 # If the map does not have 'roughly' equal population, discard it.
@@ -184,6 +182,11 @@ def parse_args() -> Namespace:
         "--state",
         help="The two-character state code (e.g., NC)",
         type=str,
+    )
+    parser.add_argument(
+        "--districts",
+        type=int,
+        help="Number of districts",
     )
     parser.add_argument(
         "--data",
@@ -260,6 +263,7 @@ def parse_args() -> Namespace:
     # Default values for args in debug mode
     debug_defaults: Dict[str, Any] = {
         "state": "NC",
+        "districts": 14,
         "data": "../rdadata/data/NC/NC_2020_data.csv",
         "shapes": "../rdadata/data/NC/NC_2020_shapes_simplified.json",
         "graph": "../rdadata/data/NC/NC_2020_graph.json",
