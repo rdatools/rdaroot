@@ -9,9 +9,6 @@ $ scripts/run_batch.py
 
 """
 
-import os
-
-import rdaroot
 
 pass
 

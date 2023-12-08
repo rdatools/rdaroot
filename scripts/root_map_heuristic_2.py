@@ -35,52 +35,7 @@ from typing import Any, List, Dict, Tuple
 
 import shutil
 
-from rdabase import (
-    require_args,
-    DISTRICTS_BY_STATE,
-    starting_seed,
-    populations,
-    total_population,
-    write_csv,
-    write_json,
-    Point,
-    Assignment,
-)
-from rdascore import (
-    load_data,
-    load_shapes,
-    load_graph,
-    load_metadata,
-    load_plan,
-    analyze_plan,
-)
-from rdaroot import (
-    file_list,
-    clean,
-    dccvt_randomsites,
-    dccvt_initial,
-    dccvt_points,
-    dccvt_adjacencies,
-    dccvt_balzer1,
-    dccvt_contiguous,
-    dccvt_balzer2,
-    dccvt_consolidated,
-    dccvt_complete,
-    dccvt_output,
-    read_redistricting_points,
-    read_redistricting_pairs,
-    index_points_file,
-    index_pairs_file,
-    randomsites,
-    initial,
-    balzer_go,
-    mk_contiguous,
-    consolidate,
-    complete,
-    postprocess,
-    calc_energy_file,
-    calc_population_deviation_file,
-)
+from uses import *
 
 
 def main() -> None:
@@ -284,7 +239,6 @@ def parse_args() -> Namespace:
     )
     parser.add_argument(
         "--scores",
-        default="output/NC_2020_root_scores.csv",
         help="Path to the output scores.csv",
         type=str,
     )
@@ -328,9 +282,9 @@ def parse_args() -> Namespace:
         "graph": "../rdadata/data/NC/NC_2020_graph.json",
         "points": "temp/NC_2020_points.csv",
         "adjacencies": "temp/NC_2020_adjacencies.csv",
-        "map": "output/NC_2020_root_map.csv",
-        "candidates": "output/NC_2020_root_candidates.json",
-        "scores": "output/NC_2020_root_scores.csv",
+        "map": "output/NC_2020_root_map_2.csv",
+        "candidates": "output/NC_2020_root_candidates_2.json",
+        "scores": "output/NC_2020_root_scores_2.csv",
     }
     args = require_args(args, args.debug, debug_defaults)
 
