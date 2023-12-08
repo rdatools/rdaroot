@@ -2,29 +2,27 @@
 
 """
 FIND AN APPROXIMATE ROOT MAP FOR A STATE
-using random district centroids as the starting points
-and some front-end transformations before the Balzer algorithm (DCCVT).
-
-NOTE - This should closely approximate our original 'baseline' approach.
+using random contiguous maps with 'roughly' equal population districts as the starting points
+for the Balzer algorithm (DCCVT).
 
 For example:
 
-scripts/root_map_heuristic_2.py \
+scripts/root_map_heuristic_1.py \
     --state NC \
     --data ../rdadata/data/NC/NC_2020_data.csv \
     --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
     --graph ../rdadata/data/NC/NC_2020_graph.json \
     --points temp/NC_2020_points.csv \
     --adjacencies temp/NC_2020_adjacencies.csv \
-    --map output/NC_2020_root_map_2.csv \
-    --candidates output/NC_2020_root_candidates_2.json \
-    --scores output/NC_2020_root_scores_2.csv \
-    --log output/NC_2020_root_log_2.txt \
+    --map output/NC_2020_root_map_1.csv \
+    --candidates output/NC_2020_root_candidates_1.json \
+    --scores output/NC_2020_root_scores_1.csv \
+    --log output/NC_2020_root_log_1.txt \
     --explicit
 
 For documentation, type:
 
-$ scripts/root_map_heuristic_2.py -h
+$ scripts/root_map_heuristic_1.py -h
 
 """
 
@@ -42,37 +40,31 @@ def main() -> None:
 
     args: Namespace = parse_args()
 
-    ### SETUP FOR SCORING ###
-
     data: Dict[str, Dict[str, int | str]] = load_data(args.data)
     shapes: Dict[str, Any] = load_shapes(args.shapes)
     graph: Dict[str, list[str]] = load_graph(args.graph)
     metadata: Dict[str, Any] = load_metadata(args.state, args.data)
 
-    ### SETUP FOR ITERATIONS ###
+    points: List[Point] = mkPoints(data, shapes)
+    pairs: List[Tuple[str, str]] = mkAdjacencies(Graph(graph))
+
+    indexed_geoids: Dict[str, int] = index_geoids(points)
+    indexed_points: List[IndexedPoint] = index_points(points)
+
+    pop_by_geoid: Dict[str, int] = populations(data)
+    total_pop: int = total_population(pop_by_geoid)
 
     clean(file_list)
 
     N: int = DISTRICTS_BY_STATE[args.state]["congress"]
     start: int = starting_seed(args.state, N)
 
-    points: List[Point] = read_redistricting_points(args.points)  # must exist
-    pairs: List[Tuple[str, str]] = read_redistricting_pairs(args.adjacencies)  # ditto
-
-    index_points_file(points, dccvt_points, verbose=args.verbose)
-    index_pairs_file(points, pairs, dccvt_adjacencies, verbose=args.verbose)
-
-    pop_by_geoid: Dict[str, int] = populations(data)
-    total_pop: int = total_population(pop_by_geoid)
-
-    ### LOOP FOR THE SPECIFIED NUMBER OF CONFORMING CANDIDATES ###
-
-    lowest_energy: float = float("inf")
     scores: List[Dict[str, Any]] = list()
     candidates: List[Dict[str, str | float | Dict[str, int | str]]] = list()
 
     conforming_count: int = 0
     seed: int = start
+    lowest_energy: float = float("inf")
 
     with open(args.log, "a") as f:
         while True:
@@ -83,13 +75,18 @@ def main() -> None:
             clean(file_list)
 
             try:
-                # Get random sites from the input points (precincts).
-                randomsites(dccvt_points, dccvt_randomsites, N, seed)
+                # Generate a random contiguous & 'roughly' equal population partitioning of the state.
+                assignments: List[Assignment] = random_map(
+                    pairs,
+                    pop_by_geoid,
+                    args.districts,
+                    seed,
+                )
+                indexed_assignments: List[
+                    IndexedWeightedAssignment
+                ] = index_assignments(assignments, indexed_geoids, pop_by_geoid)
 
-                # Make initial assignments of precincts (points) to districts (sites).
-                initial(dccvt_randomsites, dccvt_points, dccvt_initial)
-
-                # Run Balzer's algorithm (DCCVT) to get balanced but not contiguous assignments.
+                # Run Balzer's algorithm (DCCVT) to get balanced & contiguous assignments.
                 balzer_go(
                     dccvt_points,
                     None,  # NOTE - No adjacencies for the initial run.
@@ -281,9 +278,9 @@ def parse_args() -> Namespace:
         "graph": "../rdadata/data/NC/NC_2020_graph.json",
         "points": "temp/NC_2020_points.csv",
         "adjacencies": "temp/NC_2020_adjacencies.csv",
-        "map": "output/NC_2020_root_map_2.csv",
-        "candidates": "output/NC_2020_root_candidates_2.json",
-        "scores": "output/NC_2020_root_scores_2.csv",
+        "map": "output/NC_2020_root_map_1.csv",
+        "candidates": "output/NC_2020_root_candidates_1.json",
+        "scores": "output/NC_2020_root_scores_1.csv",
     }
     args = require_args(args, args.debug, debug_defaults)
 

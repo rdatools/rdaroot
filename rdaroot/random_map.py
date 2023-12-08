@@ -18,12 +18,12 @@ def random_map(
     populations: Dict[str, int],
     N: int,
     seed: int,
-    initial_csv: str,
+    # initial_csv: str,
     *,
     roughly_equal: float = 0.01,
     attempts_per_seed: int = 1000,
-    verbose: bool = False,
-) -> None:
+    # verbose: bool = False,
+) -> List[Assignment]:
     """Generate a random map with N contiguous, 'roughly equal' population districts."""
 
     random.seed(seed)
@@ -116,11 +116,13 @@ def random_map(
             f"Failed to generate {N} districts. Only generated {len(assignments.values())}."
         )
 
-    # Convert the assignments (dict) into a plan & write it to a CSV.
+    # Convert the assignments (dict) into a plan.
     plan: List[Assignment] = [
-        Assignment(geoid, district - 1) for geoid, district in assignments.items()
+        Assignment(geoid=geoid, district=district)  # districts 1-N
+        for geoid, district in assignments.items()
     ]
-    write_redistricting_assignment(initial_csv, plan)
+
+    return plan
 
 
 # TODO - Required suporting code to be replaced.

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-#
 
 """
 FIND AN APPROXIMATE ROOT MAP FOR A STATE

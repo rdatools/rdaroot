@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-#
 
 """
 CONVERT A GRAPH JSON TO AN ADJACENT PAIRS CSV
@@ -12,6 +11,7 @@ For documentation, type:
 
 $ scripts/make_adjacent_pairs.py -h
 
+NOTE - No longer used. The root maps scripts do this on the fly.
 """
 
 import argparse

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-#
 
 """
 MAKE A POINTS CSV FILE
@@ -12,6 +11,7 @@ For documentation, type:
 
 $ scripts/make_points_file.py -h
 
+NOTE - No longer used. The root maps scripts do this on the fly.
 """
 
 import argparse
