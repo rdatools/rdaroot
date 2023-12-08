@@ -17,10 +17,10 @@ scripts/root_map_heuristic_2.py \
     --graph ../rdadata/data/NC/NC_2020_graph.json \
     --points temp/NC_2020_points.csv \
     --adjacencies temp/NC_2020_adjacencies.csv \
-    --map output/NC_2020_root_map.csv \
-    --candidates output/NC_2020_root_candidates.json \
-    --scores output/NC_2020_root_scores.csv \
-    --log output/NC_2020_root_log.txt \
+    --map output/NC_2020_root_map_2.csv \
+    --candidates output/NC_2020_root_candidates_2.json \
+    --scores output/NC_2020_root_scores_2.csv \
+    --log output/NC_2020_root_log_2.txt \
     --explicit
 
 For documentation, type:
