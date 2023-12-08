@@ -18,7 +18,7 @@ scripts/root_map_heuristic_1.py \
     --candidates output/NC_2020_root_candidates_1.json \
     --scores output/NC_2020_root_scores_1.csv \
     --log output/NC_2020_root_log_1.txt \
-    --explicit
+    --no-debug
 
 For documentation, type:
 
@@ -252,7 +252,7 @@ def parse_args() -> Namespace:
     # Enable debug/explicit mode
     parser.add_argument("--debug", default=True, action="store_true", help="Debug mode")
     parser.add_argument(
-        "--explicit", dest="debug", action="store_false", help="Explicit mode"
+        "--no-debug", dest="debug", action="store_false", help="Explicit mode"
     )
 
     args: Namespace = parser.parse_args()
