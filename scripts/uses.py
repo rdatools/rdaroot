@@ -45,6 +45,7 @@ from rdaroot import (
     dccvt_output,
     read_redistricting_points,
     read_redistricting_pairs,
+    write_redistricting_points,
     write_assignments,
     index_points_file,
     index_pairs_file,

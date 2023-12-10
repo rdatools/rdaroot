@@ -7,14 +7,11 @@ for the Balzer algorithm (DCCVT).
 
 For example:
 
-scripts/root_map_heuristic_1.py \
+$ scripts/root_map_heuristic_1.py \
     --state NC \
-    --districts 14 \
     --data ../rdadata/data/NC/NC_2020_data.csv \
     --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
     --graph ../rdadata/data/NC/NC_2020_graph.json \
-    --points temp/NC_2020_points.csv \
-    --adjacencies temp/NC_2020_adjacencies.csv \
     --map output/NC_2020_root_map_1.csv \
     --candidates output/NC_2020_root_candidates_1.json \
     --scores output/NC_2020_root_scores_1.csv \
@@ -43,14 +40,16 @@ def main() -> None:
 
     data: Dict[str, Dict[str, int | str]] = load_data(args.data)
     shapes: Dict[str, Any] = load_shapes(args.shapes)
-    graph: Dict[str, list[str]] = load_graph(args.graph)
+    graph: Dict[str, List[str]] = load_graph(args.graph)
     metadata: Dict[str, Any] = load_metadata(args.state, args.data)
 
     points: List[Point] = mkPoints(data, shapes)
     pairs: List[Tuple[str, str]] = mkAdjacencies(Graph(graph))
 
+    temp_points: str = "temp/NC_2020_points.csv"
+    write_redistricting_points(points, temp_points)
+
     indexed_geoids: Dict[str, int] = index_geoids(points)
-    # indexed_points: List[IndexedPoint] = index_points(points)
 
     pop_by_geoid: Dict[str, int] = populations(data)
     total_pop: int = total_population(pop_by_geoid)
@@ -59,7 +58,8 @@ def main() -> None:
     scores: List[Dict[str, Any]] = list()
     candidates: List[Dict[str, str | float | Dict[str, int | str]]] = list()
 
-    start: int = starting_seed(args.state, args.districts)
+    N: int = int(metadata["D"])
+    start: int = starting_seed(args.state, N)
     seed: int = start
     conforming_count: int = 0
     lowest_energy: float = float("inf")
@@ -77,7 +77,7 @@ def main() -> None:
                 assignments: List[Assignment] = random_map(
                     pairs,
                     pop_by_geoid,
-                    args.districts,
+                    N,
                     seed,
                 )
                 indexed_assignments: List[
@@ -112,13 +112,16 @@ def main() -> None:
 
                 # De-index Balzer assignments to use GEOIDs.
                 postprocess(
-                    dccvt_complete, args.points, dccvt_output, verbose=args.verbose
+                    dccvt_complete,
+                    temp_points,
+                    dccvt_output,
+                    verbose=args.verbose,
                 )
 
                 # Calculate the energy & population deviation of the map.
                 energy: float = calc_energy_file(dccvt_complete, dccvt_points)
                 popdev: float = calc_population_deviation_file(
-                    dccvt_output, pop_by_geoid, total_pop, args.districts
+                    dccvt_output, pop_by_geoid, total_pop, N
                 )
 
                 # If the map does not have 'roughly' equal population, discard it.
@@ -184,11 +187,6 @@ def parse_args() -> Namespace:
         type=str,
     )
     parser.add_argument(
-        "--districts",
-        type=int,
-        help="Number of districts",
-    )
-    parser.add_argument(
         "--data",
         type=str,
         help="Data file",
@@ -202,16 +200,6 @@ def parse_args() -> Namespace:
         "--graph",
         type=str,
         help="Graph file",
-    )
-    parser.add_argument(
-        "--points",
-        help="Path to the input points.csv",
-        type=str,
-    )
-    parser.add_argument(
-        "--adjacencies",
-        help="Path to the input adjacencies.csv",
-        type=str,
     )
     parser.add_argument(
         "--map",
@@ -263,12 +251,9 @@ def parse_args() -> Namespace:
     # Default values for args in debug mode
     debug_defaults: Dict[str, Any] = {
         "state": "NC",
-        "districts": 14,
         "data": "../rdadata/data/NC/NC_2020_data.csv",
         "shapes": "../rdadata/data/NC/NC_2020_shapes_simplified.json",
         "graph": "../rdadata/data/NC/NC_2020_graph.json",
-        "points": "temp/NC_2020_points.csv",
-        "adjacencies": "temp/NC_2020_adjacencies.csv",
         "map": "output/NC_2020_root_map_1.csv",
         "candidates": "output/NC_2020_root_candidates_1.json",
         "scores": "output/NC_2020_root_scores_1.csv",

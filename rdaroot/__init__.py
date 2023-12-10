@@ -4,6 +4,7 @@ from .balzerio import (
     read_redistricting_points,
     read_redistricting_pairs,
     write_assignments,
+    write_redistricting_points,
 )
 from .helpers import *
 from .random_map import random_map

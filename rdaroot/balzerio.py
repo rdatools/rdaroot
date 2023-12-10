@@ -51,6 +51,14 @@ def read_redistricting_points(input: str) -> List[Point]:
     return red_points
 
 
+def write_redistricting_points(points: List[Point], fname: str):
+    with open(fname, "w") as f:
+        writer = csv.writer(f)
+        for point in points:
+            row: List = [point.geoid, point.ll.lat, point.ll.long, point.pop]
+            writer.writerow(row)
+
+
 def read_redistricting_pairs(input: str) -> List[Tuple[str, str]]:
     # read GEOID1, GEOID2 from CSV
     red_pairs: List[Tuple[str, str]] = []
