@@ -54,6 +54,7 @@ def read_redistricting_points(input: str) -> List[Point]:
 def write_redistricting_points(points: List[Point], fname: str):
     with open(fname, "w") as f:
         writer = csv.writer(f)
+        writer.writerow(["GEOID", "POP", "X", "Y"])
         for point in points:
             row: List = [point.geoid, point.ll.lat, point.ll.long, point.pop]
             writer.writerow(row)

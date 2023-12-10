@@ -263,6 +263,7 @@ def parse_args() -> Namespace:
         "map": "output/NC_2020_root_map_2.csv",
         "candidates": "output/NC_2020_root_candidates_2.json",
         "scores": "output/NC_2020_root_scores_2.csv",
+        "iterations": 1,
     }
     args = require_args(args, args.debug, debug_defaults)
 
