@@ -1,7 +1,246 @@
 Conforming count: 0, random seed: 518
 Failure: Too many attempts for seed (518)
 Conforming count: 0, random seed: 519
-Failure: Could not find GEOID in {'370210001.1': '370210053.1', '35.59215917880706': '35.63600681404125', '-82.54700914009665': '-82.75084943358333', '2982': '4491'}
-Conforming count: 0, random seed: 520
-Failure: Could not find GEOID in {'370210001.1': '370210053.1', '35.59215917880706': '35.63600681404125', '-82.54700914009665': '-82.75084943358333', '2982': '4491'}
-Conforming count: 0, random seed: 521
+Conforming count: 1, random seed: 520
+Conforming count: 2, random seed: 521
+Conforming count: 3, random seed: 522
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 3, random seed: 523
+Conforming count: 4, random seed: 524
+Conforming count: 5, random seed: 525
+Conforming count: 6, random seed: 526
+Conforming count: 7, random seed: 527
+Conforming count: 8, random seed: 528
+Conforming count: 9, random seed: 529
+Failure: Too many attempts for seed (529)
+Conforming count: 9, random seed: 530
+Conforming count: 10, random seed: 531
+Conforming count: 11, random seed: 532
+Conforming count: 12, random seed: 533
+Failure: Too many attempts for seed (533)
+Conforming count: 12, random seed: 534
+Failure: Too many attempts for seed (534)
+Conforming count: 12, random seed: 535
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 12, random seed: 536
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 12, random seed: 537
+Failure: Too many attempts for seed (537)
+Conforming count: 12, random seed: 538
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 12, random seed: 539
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 12, random seed: 540
+Conforming count: 13, random seed: 541
+Conforming count: 14, random seed: 542
+Conforming count: 15, random seed: 543
+Failure: Too many attempts for seed (543)
+Conforming count: 15, random seed: 544
+Conforming count: 16, random seed: 545
+Conforming count: 17, random seed: 546
+Failure: Too many attempts for seed (546)
+Conforming count: 17, random seed: 547
+Conforming count: 18, random seed: 548
+Failure: Too many attempts for seed (548)
+Conforming count: 18, random seed: 549
+Conforming count: 19, random seed: 550
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 19, random seed: 551
+Failure: Too many attempts for seed (551)
+Conforming count: 19, random seed: 552
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 19, random seed: 553
+Conforming count: 20, random seed: 554
+Conforming count: 20, random seed: 555
+Conforming count: 21, random seed: 556
+Conforming count: 22, random seed: 557
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 22, random seed: 558
+Failure: Too many attempts for seed (558)
+Conforming count: 22, random seed: 559
+Failure: Too many attempts for seed (559)
+Conforming count: 22, random seed: 560
+Conforming count: 23, random seed: 561
+Conforming count: 24, random seed: 562
+Failure: Too many attempts for seed (562)
+Conforming count: 24, random seed: 563
+Conforming count: 25, random seed: 564
+Conforming count: 26, random seed: 565
+Failure: Too many attempts for seed (565)
+Conforming count: 26, random seed: 566
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 26, random seed: 567
+Failure: Too many attempts for seed (567)
+Conforming count: 26, random seed: 568
+Conforming count: 27, random seed: 569
+Conforming count: 28, random seed: 570
+Conforming count: 29, random seed: 571
+Conforming count: 30, random seed: 572
+Conforming count: 31, random seed: 573
+Conforming count: 32, random seed: 574
+Conforming count: 33, random seed: 575
+Failure: Too many attempts for seed (575)
+Conforming count: 33, random seed: 576
+Conforming count: 33, random seed: 577
+Conforming count: 34, random seed: 578
+Conforming count: 35, random seed: 579
+Conforming count: 35, random seed: 580
+Conforming count: 36, random seed: 581
+Conforming count: 37, random seed: 582
+Conforming count: 38, random seed: 583
+Conforming count: 39, random seed: 584
+Failure: Too many attempts for seed (584)
+Conforming count: 39, random seed: 585
+Conforming count: 40, random seed: 586
+Conforming count: 41, random seed: 587
+Conforming count: 42, random seed: 588
+Failure: Too many attempts for seed (588)
+Conforming count: 42, random seed: 589
+Conforming count: 43, random seed: 590
+Failure: Too many attempts for seed (590)
+Conforming count: 43, random seed: 591
+Failure: Too many attempts for seed (591)
+Conforming count: 43, random seed: 592
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 43, random seed: 593
+Failure: Too many attempts for seed (593)
+Conforming count: 43, random seed: 594
+Conforming count: 44, random seed: 595
+Failure: Too many attempts for seed (595)
+Conforming count: 44, random seed: 596
+Conforming count: 44, random seed: 597
+Conforming count: 45, random seed: 598
+Conforming count: 46, random seed: 599
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 46, random seed: 600
+Conforming count: 46, random seed: 601
+Conforming count: 47, random seed: 602
+Conforming count: 48, random seed: 603
+Failure: Too many attempts for seed (603)
+Conforming count: 48, random seed: 604
+Conforming count: 49, random seed: 605
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 49, random seed: 606
+Conforming count: 49, random seed: 607
+Conforming count: 50, random seed: 608
+Failure: Too many attempts for seed (608)
+Conforming count: 50, random seed: 609
+Conforming count: 51, random seed: 610
+Conforming count: 52, random seed: 611
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 52, random seed: 612
+Conforming count: 52, random seed: 613
+Failure: Too many attempts for seed (613)
+Conforming count: 52, random seed: 614
+Conforming count: 53, random seed: 615
+Conforming count: 54, random seed: 616
+Conforming count: 55, random seed: 617
+Conforming count: 55, random seed: 618
+Conforming count: 56, random seed: 619
+Conforming count: 57, random seed: 620
+Failure: Too many attempts for seed (620)
+Conforming count: 57, random seed: 621
+Conforming count: 58, random seed: 622
+Conforming count: 59, random seed: 623
+Failure: Too many attempts for seed (623)
+Conforming count: 59, random seed: 624
+Conforming count: 60, random seed: 625
+Failure: Too many attempts for seed (625)
+Conforming count: 60, random seed: 626
+Conforming count: 61, random seed: 627
+Conforming count: 62, random seed: 628
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 62, random seed: 629
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 62, random seed: 630
+Failure: Too many attempts for seed (630)
+Conforming count: 62, random seed: 631
+Failure: Too many attempts for seed (631)
+Conforming count: 62, random seed: 632
+Conforming count: 63, random seed: 633
+Conforming count: 64, random seed: 634
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 64, random seed: 635
+Conforming count: 64, random seed: 636
+Failure: Too many attempts for seed (636)
+Conforming count: 64, random seed: 637
+Conforming count: 65, random seed: 638
+Conforming count: 66, random seed: 639
+Conforming count: 67, random seed: 640
+Conforming count: 68, random seed: 641
+Conforming count: 69, random seed: 642
+Conforming count: 70, random seed: 643
+Failure: Too many attempts for seed (643)
+Conforming count: 70, random seed: 644
+Failure: Too many attempts for seed (644)
+Conforming count: 70, random seed: 645
+Failure: Too many attempts for seed (645)
+Conforming count: 70, random seed: 646
+Conforming count: 71, random seed: 647
+Failure: Too many attempts for seed (647)
+Conforming count: 71, random seed: 648
+Conforming count: 72, random seed: 649
+Failure: Too many attempts for seed (649)
+Conforming count: 72, random seed: 650
+Conforming count: 72, random seed: 651
+Failure: Too many attempts for seed (651)
+Conforming count: 72, random seed: 652
+Conforming count: 73, random seed: 653
+Conforming count: 74, random seed: 654
+Conforming count: 75, random seed: 655
+Conforming count: 76, random seed: 656
+Conforming count: 76, random seed: 657
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 76, random seed: 658
+Conforming count: 77, random seed: 659
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 77, random seed: 660
+Failure: Too many attempts for seed (660)
+Conforming count: 77, random seed: 661
+Conforming count: 78, random seed: 662
+Conforming count: 79, random seed: 663
+Conforming count: 80, random seed: 664
+Conforming count: 81, random seed: 665
+Conforming count: 82, random seed: 666
+Failure: Too many attempts for seed (666)
+Conforming count: 82, random seed: 667
+Conforming count: 83, random seed: 668
+Conforming count: 84, random seed: 669
+Failure: Too many attempts for seed (669)
+Conforming count: 84, random seed: 670
+Failure: Too many attempts for seed (670)
+Conforming count: 84, random seed: 671
+Conforming count: 85, random seed: 672
+Failure: Too many attempts for seed (672)
+Conforming count: 85, random seed: 673
+Conforming count: 85, random seed: 674
+Conforming count: 85, random seed: 675
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 85, random seed: 676
+Conforming count: 86, random seed: 677
+Conforming count: 87, random seed: 678
+Conforming count: 88, random seed: 679
+Conforming count: 89, random seed: 680
+Failure: Too many attempts for seed (680)
+Conforming count: 89, random seed: 681
+Conforming count: 89, random seed: 682
+Conforming count: 90, random seed: 683
+Conforming count: 91, random seed: 684
+Conforming count: 92, random seed: 685
+Conforming count: 92, random seed: 686
+Conforming count: 93, random seed: 687
+Failure: Could not find a way to make consolidated map contiguous
+Conforming count: 93, random seed: 688
+Conforming count: 94, random seed: 689
+Failure: Too many attempts for seed (689)
+Conforming count: 94, random seed: 690
+Conforming count: 95, random seed: 691
+Conforming count: 96, random seed: 692
+Failure: Too many attempts for seed (692)
+Conforming count: 96, random seed: 693
+Conforming count: 97, random seed: 694
+Conforming count: 98, random seed: 695
+Conforming count: 99, random seed: 696
+Failure: Too many attempts for seed (696)
+Conforming count: 99, random seed: 697
+100 conforming candidates took 181 random seeds.
