@@ -136,7 +136,7 @@ def main() -> None:
             shutil.copy(dccvt_output, args.map)
 
     ensemble_out["plans"] = plans_out
-    write_json(args.plans, ensemble_out)
+    write_json(args.candidates, ensemble_out)
 
 
 # TODO - Re-factor this into rdabase
