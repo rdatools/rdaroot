@@ -53,12 +53,12 @@ def main() -> None:
             plans, data, shapes, graph, metadata, f, verbose=args.verbose
         )
 
-    full_plan: Dict[str, str | float | Dict[str, int | str]] = plan_from_ensemble(
+    lowest_plan: Dict[str, str | float | Dict[str, int | str]] = plan_from_ensemble(
         min_energy_ensemble["lowest_plan"], min_energy_ensemble
     )
-    lowest_plan: Dict[str, int | str] = full_plan["plan"]  # type: ignore
+    lowest_plan_dict: Dict[str, int | str] = lowest_plan["plan"]  # type: ignore
     assignments: List[Assignment] = [
-        Assignment(geoid, district) for geoid, district in lowest_plan.items()
+        Assignment(geoid, district) for geoid, district in lowest_plan_dict.items()
     ]
     write_redistricting_assignments(args.map, assignments)
 
