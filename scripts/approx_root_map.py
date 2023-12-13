@@ -15,6 +15,7 @@ $ scripts/approx_root_map.py \
     --graph ../rdadata/data/NC/NC_2020_graph.json \
     --map output/NC20C_RMfRST_100_rootmap.csv \
     --candidates output/NC20C_RMfRST_100_rootcandidates.json \
+    --log output/NC20C_RMfRST_100_rootlog.txt \
     --no-debug
 
 For documentation, type:
@@ -102,6 +103,11 @@ def parse_args() -> Namespace:
         help="Candidate plans output ensemble JSON file",
     )
     parser.add_argument(
+        "--log",
+        type=str,
+        help="Log TXT file",
+    )
+    parser.add_argument(
         "--roughlyequal",
         type=float,
         default=0.02,
@@ -124,11 +130,12 @@ def parse_args() -> Namespace:
     debug_defaults: Dict[str, Any] = {
         "state": "NC",
         "plans": "../rdaensemble/output/NC20C_RMfRST_100_plans.json",
-        "data": "../rdadata/data/NC/NC20C_data.csv",
-        "shapes": "../rdadata/data/NC/NC20C_shapes_simplified.json",
-        "graph": "../rdadata/data/NC/NC20C_graph.json",
+        "data": "../rdabase/data/NC/NC_2020_data.csv",
+        "shapes": "../rdabase/data/NC/NC_2020_shapes_simplified.json",
+        "graph": "../rdadata/data/NC/NC_2020_graph.json",
         "map": "output/NC20C_RMfRST_100_rootmap.csv",
         "candidates": "output/NC20C_RMfRST_100_rootcandidates.json",
+        "log": "output/NC20C_RMfRST_100_rootlog.json",
     }
     args = require_args(args, args.debug, debug_defaults)
 
