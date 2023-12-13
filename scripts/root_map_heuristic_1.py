@@ -22,6 +22,7 @@ For documentation, type:
 
 $ scripts/root_map_heuristic_1.py -h
 
+TODO - DELETE
 """
 
 import argparse
