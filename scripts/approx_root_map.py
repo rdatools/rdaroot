@@ -32,7 +32,8 @@ import os, pwd, datetime  # TODO
 
 from rdabase import require_args, read_json, write_json, Assignment, cycle, plan_type
 from rdascore import load_data, load_shapes, load_graph, load_metadata, load_plan
-from rdaroot import minimize_energies, write_redistricting_assignments
+from rdadccvt import write_redistricting_assignments
+from rdaroot import minimize_energies
 
 
 def main() -> None:

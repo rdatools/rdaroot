@@ -41,33 +41,6 @@ from rdadccvt import (
     write_assignments,
 )
 
-# TODO - DELETE
-# from .helpers import (
-#     file_list,
-#     clean,
-#     dccvt_initial,
-#     dccvt_points,
-#     dccvt_adjacencies,
-#     dccvt_balzer2,
-#     dccvt_consolidated,
-#     dccvt_complete,
-#     dccvt_output,
-# )
-# from .balzer import (
-#     index_points_file,
-#     index_pairs_file,
-#     balzer_go,
-#     consolidate,
-#     complete,
-#     postprocess,
-#     calc_energy_file,
-#     calc_population_deviation_file,
-# )
-# from .balzerio import (
-#     write_redistricting_points,
-#     write_assignments,
-# )
-
 
 def minimize_energies(
     plans: List[Dict[str, str | float | Dict[str, int | str]]],
