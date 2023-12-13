@@ -28,7 +28,9 @@ import argparse
 from argparse import ArgumentParser, Namespace
 from typing import Any, List, Dict
 
-from rdabase import require_args, read_json, write_json, Assignment
+import os, pwd, datetime  # TODO
+
+from rdabase import require_args, read_json, write_json, Assignment, cycle, plan_type
 from rdascore import load_data, load_shapes, load_graph, load_metadata, load_plan
 from rdaroot import minimize_energies, write_redistricting_assignments
 
@@ -57,9 +59,36 @@ def main() -> None:
     ]
     write_redistricting_assignments(args.map, assignments)
 
-    # TODO - Add metadata
-
+    min_energy_ensemble.update(shared_metadata(xx=args.state))
+    min_energy_ensemble["discards"] = ensemble["size"] - len(
+        min_energy_ensemble["plans"]
+    )
     write_json(args.candidates, min_energy_ensemble)
+
+
+# TODO - Import this from rdaensemble
+def shared_metadata(
+    *,
+    xx: str,
+) -> Dict[str, Any]:
+    """Create the shared metadata for ensembles and scores."""
+
+    shared: Dict[str, Any] = dict()
+
+    shared["username"] = pwd.getpwuid(os.getuid()).pw_name
+
+    timestamp = datetime.datetime.now()
+    shared["date_created"] = timestamp.strftime("%x")
+    shared["time_created"] = timestamp.strftime("%X")
+
+    shared["repository"] = "rdatools/rdaroot"  # TODO - derive this
+
+    shared["state"] = xx
+    shared["cycle"] = cycle
+    shared["plan_type"] = plan_type
+    shared["units"] = "VTD"
+
+    return shared
 
 
 def parse_args() -> Namespace:
