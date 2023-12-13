@@ -28,11 +28,10 @@ import argparse
 from argparse import ArgumentParser, Namespace
 from typing import Any, List, Dict
 
-import os, pwd, datetime  # TODO
-
 from rdabase import require_args, read_json, write_json, Assignment, cycle, plan_type
 from rdascore import load_data, load_shapes, load_graph, load_metadata, load_plan
 from rdadccvt import write_redistricting_assignments
+from rdaensemble import shared_metadata, plan_from_ensemble
 from rdaroot import minimize_energies
 
 
@@ -63,47 +62,9 @@ def main() -> None:
     ]
     write_redistricting_assignments(args.map, assignments)
 
-    min_energy_ensemble.update(shared_metadata(xx=args.state))
+    min_energy_ensemble.update(shared_metadata(args.state, "rdatools/rdaroot"))
     min_energy_ensemble["discards"] = ensemble["size"] - min_energy_ensemble["size"]
     write_json(args.candidates, min_energy_ensemble)
-
-
-# TODO - IMPORT this from rdaensemble
-def shared_metadata(
-    *,
-    xx: str,
-) -> Dict[str, Any]:
-    """Create the shared metadata for ensembles and scores."""
-
-    shared: Dict[str, Any] = dict()
-
-    shared["username"] = pwd.getpwuid(os.getuid()).pw_name
-
-    timestamp = datetime.datetime.now()
-    shared["date_created"] = timestamp.strftime("%x")
-    shared["time_created"] = timestamp.strftime("%X")
-
-    shared["repository"] = "rdatools/rdaroot"  # TODO - derive this
-
-    shared["state"] = xx
-    shared["cycle"] = cycle
-    shared["plan_type"] = plan_type
-    shared["units"] = "VTD"
-
-    return shared
-
-
-# TODO - MOVE to rdaensemble
-def plan_from_ensemble(
-    plan_name: str, ensemble: Dict[str, Any]
-) -> Dict[str, str | float | Dict[str, int | str]]:
-    """Return the named plan from an ensemble."""
-
-    plans: List[Dict[str, str | float | Dict[str, int | str]]] = ensemble["plans"]
-    for p in plans:
-        if p["name"] == plan_name:
-            return p
-    raise ValueError(f"Plan {plan_name} not found in ensemble")
 
 
 def parse_args() -> Namespace:
