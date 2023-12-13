@@ -25,11 +25,11 @@ $ scripts/approx_root_map.py -h
 
 import argparse
 from argparse import ArgumentParser, Namespace
-from typing import Any, List, Dict, Tuple
+from typing import Any, List, Dict
 
-import shutil
-
-from uses import *
+from rdabase import require_args, read_json, write_json, Assignment
+from rdascore import load_data, load_shapes, load_graph, load_metadata, load_plan
+from rdaroot import minimize_energies, write_redistricting_assignments
 
 
 def main() -> None:
@@ -39,114 +39,26 @@ def main() -> None:
 
     data: Dict[str, Dict[str, int | str]] = load_data(args.data)
     shapes: Dict[str, Any] = load_shapes(args.shapes)
-    # graph: Dict[str, List[str]] = load_graph(args.graph)
+    graph: Dict[str, List[str]] = load_graph(args.graph)
     metadata: Dict[str, Any] = load_metadata(args.state, args.data)
 
-    points: List[Point] = mkPoints(data, shapes)
+    ensemble: Dict[str, Any] = read_json(args.plans)
+    plans: List[Dict[str, str | float | Dict[str, int | str]]] = ensemble["plans"]
 
-    temp_points: str = "temp/NC20C_points.csv"
-    write_redistricting_points(points, temp_points)
-
-    indexed_geoids: Dict[str, int] = index_geoids(points)
-
-    pop_by_geoid: Dict[str, int] = populations(data)
-    total_pop: int = total_population(pop_by_geoid)
-
-    ensemble_in: Dict[str, Any] = read_json(args.plans)
-    plans_in: List[Dict[str, str | float | Dict[str, int | str]]] = ensemble_in["plans"]
-
-    ensemble_out: Dict[str, Any] = dict()
-    # TODO - Add metadata
-    plans_out: List[Dict[str, str | float | Dict[str, int | str]]] = list()
-
-    N: int = int(metadata["D"])
-    lowest_energy: float = float("inf")
-
-    for i, p in enumerate(plans_in):
-        print(f"... {i} ...")
-
-        # Get a plan & make it the initial assignments.
-        plan_name: str = str(p["name"])
-        clean(file_list)
-
-        plan_dict: Dict[str, int | str] = p["plan"]  # type: ignore
-        assignments: List[Assignment] = make_plan(plan_dict)
-
-        try:
-            indexed_assignments: List[IndexedWeightedAssignment] = index_assignments(
-                assignments, indexed_geoids, pop_by_geoid
-            )
-            write_assignments(dccvt_initial, indexed_assignments)
-
-            # Run Balzer's algorithm (DCCVT) to get balanced & contiguous assignments.
-            balzer_go(
-                dccvt_points,
-                dccvt_adjacencies,
-                dccvt_initial,
-                dccvt_balzer2,
-                balance=True,
-            )
-
-            # Clean up the Balzer assignments, unsplitting any precincts that were split.
-            consolidate(
-                dccvt_balzer2,
-                dccvt_adjacencies,
-                plan_name,
-                dccvt_consolidated,
-                verbose=args.verbose,
-            )
-            complete(
-                dccvt_consolidated,
-                dccvt_adjacencies,
-                dccvt_points,
-                dccvt_complete,
-                verbose=args.verbose,
-            )
-
-            # De-index Balzer assignments to use GEOIDs.
-            postprocess(
-                dccvt_complete,
-                temp_points,
-                dccvt_output,
-                verbose=args.verbose,
-            )
-
-        except Exception as e:
-            print(f"Failure: {e}")
-            continue
-
-        # Record the candidate map.
-        assignments: List[Assignment] = load_plan(dccvt_output)
-        plan: Dict[str, int | str] = {a.geoid: a.district for a in assignments}
-        plans_out.append({"name": plan_name, "plan": plan})  # No weights.
-
-        # Calculate the energy & population deviation of the map.
-        energy: float = calc_energy_file(dccvt_complete, dccvt_points)
-        popdev: float = calc_population_deviation_file(
-            dccvt_output, pop_by_geoid, total_pop, N
+    with open(args.log, "w") as f:
+        min_energy_ensemble: Dict[str, Any] = minimize_energies(
+            plans, data, shapes, graph, metadata, f, verbose=args.verbose
         )
 
-        # If the map does not have 'roughly' equal population, ignore it.
-        if popdev > args.roughlyequal:
-            continue
-
-        # If the energy is less than the best energy so far, save the map as the best map so far.
-        if energy < lowest_energy:
-            lowest_energy = energy
-            shutil.copy(dccvt_output, args.map)
-
-    ensemble_out["plans"] = plans_out
-    write_json(args.candidates, ensemble_out)
-
-
-# TODO - Re-factor this into rdabase
-def make_plan(assignments: Dict[str, int | str]) -> List[Assignment]:
-    """Convert a dict of geoid: district assignments to a list of Assignments."""
-
-    plan: List[Assignment] = [
-        Assignment(geoid, district) for geoid, district in assignments.items()
+    lowest_plan: Dict[str, int | str] = min_energy_ensemble["plan"]["lowest_plan"]  # type: ignore
+    assignments: List[Assignment] = [
+        Assignment(geoid, district) for geoid, district in lowest_plan.items()
     ]
-    return plan
+    write_redistricting_assignments(args.map, assignments)
+
+    # TODO - Add metadata
+
+    write_json(args.candidates, min_energy_ensemble)
 
 
 def parse_args() -> Namespace:

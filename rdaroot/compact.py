@@ -47,7 +47,7 @@ from .balzerio import (
 
 
 def minimize_energies(
-    ensemble: Dict[str, Any],
+    plans: List[Dict[str, str | float | Dict[str, int | str]]],
     data: Dict[str, Dict[str, int | str]],
     shapes: Dict[str, Any],
     graph: Dict[str, List[str]],
@@ -58,8 +58,6 @@ def minimize_energies(
     verbose: bool = False,
 ) -> Dict[str, Any]:
     """Minimize the energies / maximize the population compactness of an ensemble of maps."""
-
-    plans: List[Dict[str, str | float | Dict[str, int | str]]] = ensemble["plans"]
 
     points: List[Point] = mkPoints(data, shapes)
     pairs: List[Tuple[str, str]] = mkAdjacencies(Graph(graph))
