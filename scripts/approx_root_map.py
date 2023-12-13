@@ -53,20 +53,21 @@ def main() -> None:
             plans, data, shapes, graph, metadata, f, verbose=args.verbose
         )
 
-    lowest_plan: Dict[str, int | str] = min_energy_ensemble["plans"]["lowest_plan"]  # type: ignore
+    full_plan: Dict[str, str | float | Dict[str, int | str]] = plan_from_ensemble(
+        min_energy_ensemble["lowest_plan"], min_energy_ensemble
+    )
+    lowest_plan: Dict[str, int | str] = full_plan["plan"]  # type: ignore
     assignments: List[Assignment] = [
         Assignment(geoid, district) for geoid, district in lowest_plan.items()
     ]
     write_redistricting_assignments(args.map, assignments)
 
     min_energy_ensemble.update(shared_metadata(xx=args.state))
-    min_energy_ensemble["discards"] = ensemble["size"] - len(
-        min_energy_ensemble["plans"]
-    )
+    min_energy_ensemble["discards"] = ensemble["size"] - min_energy_ensemble["size"]
     write_json(args.candidates, min_energy_ensemble)
 
 
-# TODO - Import this from rdaensemble
+# TODO - IMPORT this from rdaensemble
 def shared_metadata(
     *,
     xx: str,
@@ -89,6 +90,19 @@ def shared_metadata(
     shared["units"] = "VTD"
 
     return shared
+
+
+# TODO - MOVE to rdaensemble
+def plan_from_ensemble(
+    plan_name: str, ensemble: Dict[str, Any]
+) -> Dict[str, str | float | Dict[str, int | str]]:
+    """Return the named plan from an ensemble."""
+
+    plans: List[Dict[str, str | float | Dict[str, int | str]]] = ensemble["plans"]
+    for p in plans:
+        if p["name"] == plan_name:
+            return p
+    raise ValueError(f"Plan {plan_name} not found in ensemble")
 
 
 def parse_args() -> Namespace:

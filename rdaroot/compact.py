@@ -76,6 +76,8 @@ def minimize_energies(
     min_energy_plans: List[Dict[str, str | float | Dict[str, int | str]]] = list()
 
     N: int = int(metadata["D"])
+
+    count: int = 0
     lowest_plan: str = ""
     lowest_energy: float = float("inf")
 
@@ -131,6 +133,7 @@ def minimize_energies(
         assignments: List[Assignment] = load_plan(dccvt_output)
         plan: Dict[str, int | str] = {a.geoid: a.district for a in assignments}
         min_energy_plans.append({"name": plan_name, "plan": plan})  # No weights.
+        count += 1
 
         energy: float = calc_energy_file(dccvt_complete, dccvt_points)
         popdev: float = calc_population_deviation_file(
@@ -142,6 +145,7 @@ def minimize_energies(
             lowest_plan = plan_name
 
     min_energy_ensemble["plans"] = min_energy_plans
+    min_energy_ensemble["size"] = count
     min_energy_ensemble["lowest_energy"] = lowest_energy
     min_energy_ensemble["lowest_plan"] = lowest_plan
 
