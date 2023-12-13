@@ -137,7 +137,7 @@ def minimize_energies(
             dccvt_output, pop_by_geoid, total_pop, N
         )
 
-        if popdev > roughly_equal and energy < lowest_energy:
+        if popdev < roughly_equal and energy < lowest_energy:
             lowest_energy = energy
             lowest_plan = plan_name
 

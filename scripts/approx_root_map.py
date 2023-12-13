@@ -51,7 +51,7 @@ def main() -> None:
             plans, data, shapes, graph, metadata, f, verbose=args.verbose
         )
 
-    lowest_plan: Dict[str, int | str] = min_energy_ensemble["plan"]["lowest_plan"]  # type: ignore
+    lowest_plan: Dict[str, int | str] = min_energy_ensemble["plans"]["lowest_plan"]  # type: ignore
     assignments: List[Assignment] = [
         Assignment(geoid, district) for geoid, district in lowest_plan.items()
     ]
