@@ -28,8 +28,8 @@ import argparse
 from argparse import ArgumentParser, Namespace
 from typing import Any, List, Dict
 
-from rdabase import require_args, read_json, write_json, Assignment, cycle, plan_type
-from rdascore import load_data, load_shapes, load_graph, load_metadata, load_plan
+from rdabase import require_args, read_json, write_json, Assignment
+from rdascore import load_data, load_shapes, load_graph, load_metadata
 from rdadccvt import write_redistricting_assignments
 from rdaensemble import shared_metadata, plan_from_ensemble
 from rdaroot import minimize_energies
