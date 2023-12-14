@@ -1,6 +1,6 @@
 # rdaroot
 
-Root redistricting maps (plans)
+Root maps (redistricting plans)
 
 ## Definition
 
