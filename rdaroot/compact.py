@@ -33,7 +33,6 @@ from rdadccvt import (
     index_pairs_file,
     balzer_go,
     consolidate,
-    complete,
     postprocess,
     calc_energy_file,
     calc_population_deviation_file,
@@ -106,13 +105,6 @@ def minimize_energies(
                 dccvt_adjacencies,
                 plan_name,
                 dccvt_consolidated,
-                verbose=verbose,
-            )
-            complete(
-                dccvt_consolidated,
-                dccvt_adjacencies,
-                dccvt_points,
-                dccvt_complete,
                 verbose=verbose,
             )
             postprocess(
