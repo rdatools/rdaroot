@@ -9,13 +9,13 @@ For example:
 
 $ scripts/approx_root_map.py \
     --state NC \
-    --plans ../rdaensemble/output/NC20C_RMfRST_100_plans.json \
+    --plans ~/iClound/ensembles/NC20C_RMfRST_100_plans.json \
     --data ../rdadata/data/NC/NC_2020_data.csv \
     --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
     --graph ../rdadata/data/NC/NC_2020_graph.json \
-    --map output/NC20C_RMfRST_100_rootmap.csv \
-    --candidates output/NC20C_RMfRST_100_rootcandidates.json \
-    --log output/NC20C_RMfRST_100_rootlog.txt \
+    --map ~/iCloud/rootmaps/NC20C_RMfRST_100_rootmap.csv \
+    --candidates ~/iCloud/rootmaps/NC20C_RMfRST_100_rootcandidates.json \
+    --log ~/iCloud/rootmaps/NC20C_RMfRST_100_rootlog.txt \
     --no-debug
 
 For documentation, type:
@@ -134,13 +134,13 @@ def parse_args() -> Namespace:
     # Default values for args in debug mode
     debug_defaults: Dict[str, Any] = {
         "state": "NC",
-        "plans": "../rdaensemble/output/NC20C_RMfRST_100_plans.json",
+        "plans": "~/iClound/ensembles/NC20C_RMfRST_100_plans.json",
         "data": "../rdabase/data/NC/NC_2020_data.csv",
         "shapes": "../rdabase/data/NC/NC_2020_shapes_simplified.json",
         "graph": "../rdadata/data/NC/NC_2020_graph.json",
-        "map": "output/NC20C_RMfRST_100_rootmap.csv",
-        "candidates": "output/NC20C_RMfRST_100_rootcandidates.json",
-        "log": "output/NC20C_RMfRST_100_rootlog.json",
+        "map": "~/iCloud/rootmaps/NC20C_RMfRST_100_rootmap.csv",
+        "candidates": "~/iCloud/rootmaps/NC20C_RMfRST_100_rootcandidates.json",
+        "log": "~/iCloud/rootmaps/NC20C_RMfRST_100_rootlog.json",
     }
     args = require_args(args, args.debug, debug_defaults)
 
