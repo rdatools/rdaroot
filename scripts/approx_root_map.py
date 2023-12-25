@@ -9,7 +9,7 @@ For example:
 
 $ scripts/approx_root_map.py \
     --state NC \
-    --plans ~/iClound/ensembles/NC20C_RMfRST_100_plans.json \
+    --plans ~/iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json \
     --data ../rdadata/data/NC/NC_2020_data.csv \
     --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
     --graph ../rdadata/data/NC/NC_2020_graph.json \
@@ -134,7 +134,7 @@ def parse_args() -> Namespace:
     # Default values for args in debug mode
     debug_defaults: Dict[str, Any] = {
         "state": "NC",
-        "plans": "~/iClound/ensembles/NC20C_RMfRST_100_plans.json",
+        "plans": "~/iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json",
         "data": "../rdabase/data/NC/NC_2020_data.csv",
         "shapes": "../rdabase/data/NC/NC_2020_shapes_simplified.json",
         "graph": "../rdadata/data/NC/NC_2020_graph.json",

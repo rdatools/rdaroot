@@ -93,7 +93,7 @@ and then run the search script like this:
 ```bash
 scripts/approx_root_map.py \
     --state NC \
-    --plans ~/iClound/ensembles/NC20C_RMfRST_100_plans.json \
+    --plans ~/iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json \
     --data ../rdadata/data/NC/NC_2020_data.csv \
     --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
     --graph ../rdadata/data/NC/NC_2020_graph.json \
