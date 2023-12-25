@@ -13,9 +13,9 @@ $ scripts/approx_root_map.py \
     --data ../rdadata/data/NC/NC_2020_data.csv \
     --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
     --graph ../rdadata/data/NC/NC_2020_graph.json \
-    --map ~/iCloud/rootmaps/NC20C_RMfRST_100_rootmap.csv \
-    --candidates ~/iCloud/rootmaps/NC20C_RMfRST_100_rootcandidates.json \
-    --log ~/iCloud/rootmaps/NC20C_RMfRST_100_rootlog.txt \
+    --map ~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootmap.csv \
+    --candidates ~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootcandidates.json \
+    --log ~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootlog.txt \
     --no-debug
 
 For documentation, type:
@@ -138,9 +138,9 @@ def parse_args() -> Namespace:
         "data": "../rdabase/data/NC/NC_2020_data.csv",
         "shapes": "../rdabase/data/NC/NC_2020_shapes_simplified.json",
         "graph": "../rdadata/data/NC/NC_2020_graph.json",
-        "map": "~/iCloud/rootmaps/NC20C_RMfRST_100_rootmap.csv",
-        "candidates": "~/iCloud/rootmaps/NC20C_RMfRST_100_rootcandidates.json",
-        "log": "~/iCloud/rootmaps/NC20C_RMfRST_100_rootlog.json",
+        "map": "~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootmap.csv",
+        "candidates": "~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootcandidates.json",
+        "log": "~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootlog.json",
     }
     args = require_args(args, args.debug, debug_defaults)
 
