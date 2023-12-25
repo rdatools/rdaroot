@@ -94,9 +94,9 @@ and then run the search script like this:
 scripts/approx_root_map.py \
     --state NC \
     --plans ~/iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json \
-    --data ../rdadata/data/NC/NC_2020_data.csv \
-    --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
-    --graph ../rdadata/data/NC/NC_2020_graph.json \
+    --data ../rdabase/data/NC/NC_2020_data.csv \
+    --shapes ../rdabase/data/NC/NC_2020_shapes_simplified.json \
+    --graph ../rdabase/data/NC/NC_2020_graph.json \
     --map ~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootmap.csv \
     --candidates ~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootcandidates.json \
     --log ~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootlog.txt \

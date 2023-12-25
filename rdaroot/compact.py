@@ -108,7 +108,7 @@ def minimize_energies(
                 verbose=verbose,
             )
             postprocess(
-                dccvt_complete,
+                dccvt_consolidated,
                 temp_points,
                 dccvt_output,
                 verbose=verbose,
@@ -123,7 +123,7 @@ def minimize_energies(
         min_energy_plans.append({"name": plan_name, "plan": plan})  # No weights.
         count += 1
 
-        energy: float = calc_energy_file(dccvt_complete, dccvt_points)
+        energy: float = calc_energy_file(dccvt_consolidated, dccvt_points)
         popdev: float = calc_population_deviation_file(
             dccvt_output, pop_by_geoid, total_pop, N
         )
@@ -132,10 +132,10 @@ def minimize_energies(
             lowest_energy = energy
             lowest_plan = plan_name
 
-    min_energy_ensemble["plans"] = min_energy_plans
     min_energy_ensemble["size"] = count
-    min_energy_ensemble["lowest_energy"] = lowest_energy
     min_energy_ensemble["lowest_plan"] = lowest_plan
+    min_energy_ensemble["lowest_energy"] = lowest_energy
+    min_energy_ensemble["plans"] = min_energy_plans
 
     return min_energy_ensemble
 

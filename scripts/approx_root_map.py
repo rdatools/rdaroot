@@ -9,13 +9,13 @@ For example:
 
 $ scripts/approx_root_map.py \
     --state NC \
-    --plans ~/iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json \
-    --data ../rdadata/data/NC/NC_2020_data.csv \
-    --shapes ../rdadata/data/NC/NC_2020_shapes_simplified.json \
-    --graph ../rdadata/data/NC/NC_2020_graph.json \
-    --map ~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootmap.csv \
-    --candidates ~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootcandidates.json \
-    --log ~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootlog.txt \
+    --plans ../../iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json \
+    --data ../rdabase/data/NC/NC_2020_data.csv \
+    --shapes ../rdabase/data/NC/NC_2020_shapes_simplified.json \
+    --graph ../rdabase/data/NC/NC_2020_graph.json \
+    --map ../../iCloud/fileout/rootmaps/NC20C_rootmap.csv \
+    --candidates ../../iCloud/fileout/rootmaps/NC20C_rootcandidates.json \
+    --log ../../iCloud/fileout/rootmaps/NC20C_rootlog.txt \
     --no-debug
 
 For documentation, type:
@@ -62,8 +62,9 @@ def main() -> None:
     ]
     write_redistricting_assignments(args.map, assignments)
 
-    min_energy_ensemble.update(shared_metadata(args.state, "rdatools/rdaroot"))
-    min_energy_ensemble["discards"] = ensemble["size"] - min_energy_ensemble["size"]
+    min_energy_props: Dict[str, Any] = shared_metadata(args.state, "rdatools/rdaroot")
+    min_energy_props["discards"] = ensemble["size"] - min_energy_ensemble["size"]
+    min_energy_ensemble = min_energy_props | min_energy_ensemble
     write_json(args.candidates, min_energy_ensemble)
 
 
@@ -134,13 +135,13 @@ def parse_args() -> Namespace:
     # Default values for args in debug mode
     debug_defaults: Dict[str, Any] = {
         "state": "NC",
-        "plans": "~/iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json",
+        "plans": "../../iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json",
         "data": "../rdabase/data/NC/NC_2020_data.csv",
         "shapes": "../rdabase/data/NC/NC_2020_shapes_simplified.json",
-        "graph": "../rdadata/data/NC/NC_2020_graph.json",
-        "map": "~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootmap.csv",
-        "candidates": "~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootcandidates.json",
-        "log": "~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootlog.json",
+        "graph": "../rdabase/data/NC/NC_2020_graph.json",
+        "map": "../../iCloud/fileout/rootmaps/NC20C_rootmap.csv",
+        "candidates": "../../iCloud/fileout/rootmaps/NC20C_rootcandidates.json",
+        "log": "../../iCloud/fileout/rootmaps/NC20Crootlog.json",
     }
     args = require_args(args, args.debug, debug_defaults)
 
