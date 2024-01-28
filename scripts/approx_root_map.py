@@ -113,13 +113,6 @@ def parse_args() -> Namespace:
         type=str,
         help="Log TXT file",
     )
-    # TODO - Not used!?!
-    # parser.add_argument(
-    #     "--roughlyequal",
-    #     type=float,
-    #     default=0.02,
-    #     help="'Roughly equal' population threshold",
-    # )
 
     parser.add_argument(
         "-v", "--verbose", dest="verbose", action="store_true", help="Verbose mode"
