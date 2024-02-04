@@ -1,3 +1,4 @@
-pytest
 rdabase
+rdadccvt
+rdaensemble
 rdascore
