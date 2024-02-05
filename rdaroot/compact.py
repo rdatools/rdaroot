@@ -15,8 +15,6 @@ from rdabase import (
     IndexedWeightedAssignment,
     index_geoids,
     index_assignments,
-)
-from rdascore import (
     load_plan,
 )
 from rdadccvt import (
