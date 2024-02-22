@@ -71,6 +71,7 @@ def main() -> None:
     write_redistricting_assignments(args.map, assignments)
 
     min_energy_props: Dict[str, Any] = shared_metadata(args.state, "rdatools/rdaroot")
+    min_energy_props["packed"] = False
     min_energy_props["discards"] = ensemble["size"] - min_energy_ensemble["size"]
     min_energy_ensemble = min_energy_props | min_energy_ensemble
     write_json(args.candidates, min_energy_ensemble)
