@@ -25,7 +25,7 @@ from rdadccvt import (
     dccvt_adjacencies,
     dccvt_balzer2,
     dccvt_consolidated,
-    dccvt_complete,
+    # dccvt_complete,
     dccvt_output,
     index_points_file,
     index_pairs_file,
