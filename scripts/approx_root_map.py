@@ -28,6 +28,10 @@ import argparse
 from argparse import ArgumentParser, Namespace
 from typing import Any, List, Dict
 
+import warnings
+
+warnings.warn = lambda *args, **kwargs: None
+
 from rdabase import (
     require_args,
     read_json,
@@ -71,6 +75,7 @@ def main() -> None:
     write_redistricting_assignments(args.map, assignments)
 
     min_energy_props: Dict[str, Any] = shared_metadata(args.state, "rdatools/rdaroot")
+    # TODO - Update the 'plan_type' property with the arg provided (a bit of a hack ...)
     min_energy_props["packed"] = False
     min_energy_props["discards"] = ensemble["size"] - min_energy_ensemble["size"]
     min_energy_ensemble = min_energy_props | min_energy_ensemble

@@ -1,3 +1,5 @@
+gerrychain
+tqdm
 rdabase
 rdadccvt
 rdaensemble
