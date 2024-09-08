@@ -8,15 +8,15 @@ as starting points, find a map with the lowest energy.
 For example:
 
 $ scripts/approx_root_map.py \
-    --state NC \
-    --plans ../../iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json \
-    --data ../rdabase/data/NC/NC_2020_data.csv \
-    --shapes ../rdabase/data/NC/NC_2020_shapes_simplified.json \
-    --graph ../rdabase/data/NC/NC_2020_graph.json \
-    --map ../../iCloud/fileout/rootmaps/NC20C_rootmap.csv \
-    --candidates ../../iCloud/fileout/rootmaps/NC20C_rootcandidates.json \
-    --log ../../iCloud/fileout/rootmaps/NC20C_rootlog.txt \
-    --no-debug
+--state NC \
+--plans ../../iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json \
+--data ../rdabase/data/NC/NC_2020_data.csv \
+--shapes ../rdabase/data/NC/NC_2020_shapes_simplified.json \
+--graph ../rdabase/data/NC/NC_2020_graph.json \
+--map ../../iCloud/fileout/rootmaps/NC20C_rootmap.csv \
+--candidates ../../iCloud/fileout/rootmaps/NC20C_rootcandidates.json \
+--log ../../iCloud/fileout/rootmaps/NC20C_rootlog.txt \
+--no-debug
 
 For documentation, type:
 
