@@ -97,9 +97,9 @@ scripts/approx_root_map.py \
     --data ../rdabase/data/NC/NC_2020_data.csv \
     --shapes ../rdabase/data/NC/NC_2020_shapes_simplified.json \
     --graph ../rdabase/data/NC/NC_2020_graph.json \
-    --map ~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootmap.csv \
-    --candidates ~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootcandidates.json \
-    --log ~/iCloud/fileout/rootmaps/NC20C_RMfRST_100_rootlog.txt \
+    --map temp/NC20C_root_map.csv \
+    --candidates temp/NC20C_root_candidates.json \
+    --log temp/NC20C_root_log.txt \
     --no-debug
 ```
 

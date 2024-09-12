@@ -9,13 +9,13 @@ For example:
 
 $ scripts/approx_root_map.py \
 --state NC \
---plans ../../iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json \
---data ../rdabase/data/NC/NC_2020_data.csv \
---shapes ../rdabase/data/NC/NC_2020_shapes_simplified.json \
---graph ../rdabase/data/NC/NC_2020_graph.json \
---map ../../iCloud/fileout/rootmaps/NC20C_rootmap.csv \
---candidates ../../iCloud/fileout/rootmaps/NC20C_rootcandidates.json \
---log ../../iCloud/fileout/rootmaps/NC20C_rootlog.txt \
+--plans ../../iCloud/fileout/ensembles/MD20U_RMfRST_100_plans.json \
+--data ../rdabase/data/MD/MD_2020_data.csv \
+--shapes ../rdabase/data/MD/MD_2020_shapes_simplified.json \
+--graph ../rdabase/data/MD/MD_2020_graph.json \
+--map ../../iCloud/fileout/rootmaps/MD20U_rootmap.csv \
+--candidates ../../iCloud/fileout/rootmaps/MD20U_rootcandidates.json \
+--log ../../iCloud/fileout/rootmaps/MD20U_rootlog.txt \
 --no-debug
 
 For documentation, type:
@@ -142,14 +142,14 @@ def parse_args() -> Namespace:
 
     # Default values for args in debug mode
     debug_defaults: Dict[str, Any] = {
-        "state": "NC",
-        "plans": "../../iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json",
-        "data": "../rdabase/data/NC/NC_2020_data.csv",
-        "shapes": "../rdabase/data/NC/NC_2020_shapes_simplified.json",
-        "graph": "../rdabase/data/NC/NC_2020_graph.json",
-        "map": "../../iCloud/fileout/rootmaps/NC20C_rootmap.csv",
-        "candidates": "../../iCloud/fileout/rootmaps/NC20C_rootcandidates.json",
-        "log": "../../iCloud/fileout/rootmaps/NC20Crootlog.json",
+        "state": "MD",
+        "plans": "../rdaensemble/temp/MD20U_100_plans.json",
+        "data": "../rdabase/data/MD/MD_2020_data.csv",
+        "shapes": "../rdabase/data/MD/MD_2020_shapes_simplified.json",
+        "graph": "../rdabase/data/MD/MD_2020_graph.json",
+        "map": "temp/MD20U_rootmap.csv",
+        "candidates": "temp/MD20U_root_candidates.json",
+        "log": "temp/MD20U_root_log.txt",
     }
     args = require_args(args, args.debug, debug_defaults)
 
