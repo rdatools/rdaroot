@@ -72,7 +72,7 @@ They yield similar results.
 Clone the repository:
 
 ```bash
-$ git clone https://github.com/alecramsay/rdaroot
+$ git clone https://github.com/rdatools/rdaroot
 $ cd rdaroot
 ```
 
