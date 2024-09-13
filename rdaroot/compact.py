@@ -109,49 +109,18 @@ def minimize_energies(
 
             ### DEBUG - VERIFY THAT THE BALERIZED PLAN IS STILL WELL FORMED
             if debug:
-                well_formed: bool = True
                 balzer_assignments: List[IndexedWeightedAssignment] = read_assignments(
                     dccvt_balzer2
                 )
-
-                # All points are assigned
-
-                point_geoids: List[str] = [p.geoid for p in points]
-                assignment_geoids: Set[str] = set(
-                    [points[a.point].geoid for a in balzer_assignments]
-                )
-                for geoid in point_geoids:
-                    if geoid not in assignment_geoids:
-                        well_formed = False
-                        print(
-                            f"- Balzer did not assign {geoid} with population {data[geoid]['TOTAL_POP']}."
-                        )
-                if not well_formed:
-                    print(f"Unpopulated geoids:")
-                    for geoid in point_geoids:
-                        if data[geoid]["TOTAL_POP"] == 0:
-                            print(f"- {geoid}")
-                    assert False
-
-                # Districts are contiguous
-
-                district_ids: List[Any] = []
-                geoids_by_district: Dict[int | str, List[str]] = defaultdict(list)
-
-                for a in balzer_assignments:
-                    district_id: Any = a.site + 1
-                    geoid: str = points[a.point].geoid
-
-                    geoids_by_district[district_id].append(geoid)
-                    if district_id not in district_ids:
-                        district_ids.append(district_id)
-                for district_id in district_ids:
-                    geoids: List[str] = geoids_by_district[district_id]
-                    if not is_connected(geoids, graph):
-                        print(f"After Balzer, {p['name']} is not contiguous!")  # type: ignore
-                        assert False
-
-                print(f"Plan {p['name']}({i}) after Balzer is still well formed.")  # type: ignore
+                assignments: List[Assignment] = [
+                    Assignment(points[a.point].geoid, a.site + 1)
+                    for a in balzer_assignments
+                ]
+                print()
+                print("Verifying the plan after Balzer:")
+                plan_is_well_formed(plan_name, assignments, data, graph)
+                print(f"Plan {plan_name}({i}) after Balzer is still complete & contiguous.")  # type: ignore
+                print()
             ###
 
             consolidate(
@@ -194,6 +163,58 @@ def minimize_energies(
     min_energy_ensemble["plans"] = min_energy_plans
 
     return min_energy_ensemble
+
+
+def plan_is_well_formed(
+    plan_name: str,
+    plan: List[Assignment],
+    data: Dict[str, Dict[str, int | str]],
+    graph: Dict[str, List[str]],
+) -> bool:
+    """Verify that a plan is well formed: complete & contiguous."""
+
+    well_formed: bool = True
+    all_geoids: List[str] = list(graph.keys())
+    if "OUT_OF_STATE" in all_geoids:
+        all_geoids.remove("OUT_OF_STATE")
+
+    # The plan is complete, i.e., all points are assigned
+
+    assignment_geoids: Set[str] = set([a.geoid for a in plan])
+    for geoid in all_geoids:
+        if geoid not in assignment_geoids:
+            well_formed = False
+            print(
+                f"- The plan does not assign {geoid} with population {data[geoid]['TOTAL_POP']}."
+            )
+
+    if not well_formed:
+        print()
+        print(f"Unpopulated precincts for the state:")
+        for geoid in all_geoids:
+            if data[geoid]["TOTAL_POP"] == 0:
+                print(f"- {geoid}")
+        print()
+
+    # Districts are contiguous
+
+    geoids_by_district: Dict[int | str, List[str]] = defaultdict(list)
+
+    for a in plan:
+        geoids_by_district[a.district].append(a.geoid)
+
+    for district_id, geoids in geoids_by_district.items():
+        geoids: List[str] = geoids_by_district[district_id]
+        if not is_connected(geoids, graph):
+            print(f"District {district_id} in plan {plan_name} is not contiguous!")  # type: ignore
+            well_formed = False
+
+    print()
+
+    if not well_formed:
+        assert False, "This plan is not well formed."
+
+    return True
 
 
 ### END ###

@@ -47,7 +47,7 @@ from rdabase import (
 )
 from rdadccvt import write_redistricting_assignments
 from rdaensemble import shared_metadata, plan_from_ensemble
-from rdaroot import minimize_energies
+from rdaroot import minimize_energies, plan_is_well_formed
 
 
 def main() -> None:
@@ -63,21 +63,16 @@ def main() -> None:
     ensemble: Dict[str, Any] = read_json(args.plans)
     plans: List[Dict[str, str | float | Dict[str, int | str]]] = ensemble["plans"]
 
-    ### DEBUG: VERIFY THAT ALL THE INPUT PLANS ARE CONTIGUOUS
+    ### DEBUG: VERIFY THAT ALL THE INPUT PLANS ARE WELL FORMED
     if args.debug:
-        sample_plan: Dict[str, Any] = plans[0]["plan"]  # type: ignore
-        district_ids: List[Any] = list(set(list(sample_plan.values())))
+        print()
+        print("Verifying that all input plans are complete & contiguous:")
         for p in plans:
-            district_by_geoid: Dict[str, int | str] = p["plan"]  # type: ignore
-            geoids_by_district: Dict[int | str, List[str]] = defaultdict(list)
-            for geoid, district_id in district_by_geoid.items():
-                geoids_by_district[district_id].append(geoid)
-            for district_id in district_ids:
-                geoids: List[str] = geoids_by_district[district_id]
-                if not is_connected(geoids, graph):
-                    print(f"Plan {p['name']} is not contiguous!")
-                    assert False
-        print("All input plans are contiguous.")
+            assignments: List[Assignment] = [Assignment(k, v) for k, v in p["plan"].items()]  # type: ignore
+            plan_is_well_formed(str(p["name"]), assignments, data, graph)
+
+        print("All input plans are complete & contiguous.")
+        print()
     ###
 
     with open(args.log, "w") as f:
@@ -169,23 +164,23 @@ def parse_args() -> Namespace:
 
     # Default values for args in debug mode
     debug_defaults: Dict[str, Any] = {
-        "state": "NC",
-        "plans": "../rdaensemble/temp/NC20U_100_plans.json",
-        "data": "../rdabase/data/NC/NC_2020_data.csv",
-        "shapes": "../rdabase/data/NC/NC_2020_shapes_simplified.json",
-        "graph": "../rdabase/data/NC/NC_2020_graph.json",
-        "map": "temp/NC20U_rootmap.csv",
-        "candidates": "temp/NC20U_root_candidates.json",
-        "log": "temp/NC20U_root_log.txt",
+        # "state": "NC",
+        # "plans": "../rdaensemble/temp/NC20U_100_plans.json",
+        # "data": "../rdabase/data/NC/NC_2020_data.csv",
+        # "shapes": "../rdabase/data/NC/NC_2020_shapes_simplified.json",
+        # "graph": "../rdabase/data/NC/NC_2020_graph.json",
+        # "map": "temp/NC20U_rootmap.csv",
+        # "candidates": "temp/NC20U_root_candidates.json",
+        # "log": "temp/NC20U_root_log.txt",
         #
-        # "state": "MD",
-        # "plans": "../rdaensemble/temp/MD20U_100_plans.json",
-        # "data": "../rdabase/data/MD/MD_2020_data.csv",
-        # "shapes": "../rdabase/data/MD/MD_2020_shapes_simplified.json",
-        # "graph": "../rdabase/data/MD/MD_2020_graph.json",
-        # "map": "temp/MD20U_rootmap.csv",
-        # "candidates": "temp/MD20U_root_candidates.json",
-        # "log": "temp/MD20U_root_log.txt",
+        "state": "MD",
+        "plans": "../rdaensemble/temp/MD20U_100_plans.json",
+        "data": "../rdabase/data/MD/MD_2020_data.csv",
+        "shapes": "../rdabase/data/MD/MD_2020_shapes_simplified.json",
+        "graph": "../rdabase/data/MD/MD_2020_graph.json",
+        "map": "temp/MD20U_rootmap.csv",
+        "candidates": "temp/MD20U_root_candidates.json",
+        "log": "temp/MD20U_root_log.txt",
         #
         # "state": "PA",
         # "plans": "../rdaensemble/temp/PA20U_100_plans.json",
