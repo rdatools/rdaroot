@@ -32,6 +32,8 @@ import warnings
 
 warnings.warn = lambda *args, **kwargs: None
 
+from collections import defaultdict
+
 from rdabase import (
     require_args,
     read_json,
@@ -41,6 +43,7 @@ from rdabase import (
     load_shapes,
     load_graph,
     load_metadata,
+    is_connected,
 )
 from rdadccvt import write_redistricting_assignments
 from rdaensemble import shared_metadata, plan_from_ensemble
@@ -59,6 +62,22 @@ def main() -> None:
 
     ensemble: Dict[str, Any] = read_json(args.plans)
     plans: List[Dict[str, str | float | Dict[str, int | str]]] = ensemble["plans"]
+
+    # Verify that all the input plans are contiguous
+    if args.debug:
+        sample_plan: Dict[str, Any] = plans[0]["plan"]  # type: ignore
+        district_ids: List[Any] = list(set(list(sample_plan.values())))
+        for p in plans:
+            district_by_geoid: Dict[str, int | str] = p["plan"]  # type: ignore
+            geoids_by_district: Dict[int | str, List[str]] = defaultdict(list)
+            for geoid, district_id in district_by_geoid.items():
+                geoids_by_district[district_id].append(geoid)
+            for district_id in district_ids:
+                geoids: List[str] = geoids_by_district[district_id]
+                if not is_connected(geoids, graph):
+                    print(f"Plan {p['name']} is not contiguous!")
+                    assert False
+    #
 
     with open(args.log, "w") as f:
         min_energy_ensemble: Dict[str, Any] = minimize_energies(
