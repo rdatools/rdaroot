@@ -109,6 +109,7 @@ def minimize_energies(
 
             ### DEBUG - VERIFY THAT THE BALERIZED PLAN IS STILL WELL FORMED
             if debug:
+                well_formed: bool = True
                 balzer_assignments: List[IndexedWeightedAssignment] = read_assignments(
                     dccvt_balzer2
                 )
@@ -121,10 +122,16 @@ def minimize_energies(
                 )
                 for geoid in point_geoids:
                     if geoid not in assignment_geoids:
+                        well_formed = False
                         print(
-                            f"Balzer did not assign {geoid} with population {data[geoid]['TOTAL_POP']}."
+                            f"- Balzer did not assign {geoid} with population {data[geoid]['TOTAL_POP']}."
                         )
-                        assert False
+                if not well_formed:
+                    print(f"Unpopulated geoids:")
+                    for geoid in point_geoids:
+                        if data[geoid]["TOTAL_POP"] == 0:
+                            print(f"- {geoid}")
+                    assert False
 
                 # Districts are contiguous
 
@@ -143,7 +150,8 @@ def minimize_energies(
                     if not is_connected(geoids, graph):
                         print(f"After Balzer, {p['name']} is not contiguous!")  # type: ignore
                         assert False
-                print(f"Plan {p['name']}({i}) after Balzer is still contiguous.")  # type: ignore
+
+                print(f"Plan {p['name']}({i}) after Balzer is still well formed.")  # type: ignore
             ###
 
             consolidate(
