@@ -58,6 +58,9 @@ def minimize_energies(
 ) -> Dict[str, Any]:
     """Minimize the energies / maximize the population compactness of an ensemble of maps."""
 
+    working_files: List[str] = file_list
+    working_files.remove(dccvt_points_temp)
+
     points: List[Point] = mkPoints(data, shapes)
     pairs: List[Tuple[str, str]] = mkAdjacencies(Graph(graph))
 
@@ -83,7 +86,7 @@ def minimize_energies(
         print(f"... {i} ...")
         print(f"... {i} ...", file=logfile)
 
-        clean(file_list)
+        clean(working_files)
 
         plan_name: str = str(p["name"])
         plan_dict: Dict[str, int | str] = p["plan"]  # type: ignore
@@ -123,7 +126,7 @@ def minimize_energies(
                 for district_id in district_ids:
                     geoids: List[str] = geoids_by_district[district_id]
                     if not is_connected(geoids, graph):
-                        print(f"Plan {p['name']} is not contiguous!")
+                        print(f"After Balzer, {p['name']} is not contiguous!")
                         assert False
                 print(f"Plan {p['name']}({i}) after Balzer is still contiguous.")
             ###
@@ -144,6 +147,7 @@ def minimize_energies(
             )
 
         except Exception as e:
+            print(f"Failure: {e}")
             print(f"Failure: {e}", file=logfile)
             continue
 
