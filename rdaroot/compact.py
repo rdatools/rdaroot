@@ -24,6 +24,7 @@ from rdadccvt import (
     dccvt_points,
     dccvt_adjacencies,
     dccvt_balzer2,
+    dccvt_points_temp,
     dccvt_consolidated,
     # dccvt_complete,
     dccvt_output,
@@ -55,8 +56,7 @@ def minimize_energies(
     points: List[Point] = mkPoints(data, shapes)
     pairs: List[Tuple[str, str]] = mkAdjacencies(Graph(graph))
 
-    temp_points: str = "temp/NC_2020_points.csv"
-    write_redistricting_points(points, temp_points)
+    write_redistricting_points(points, dccvt_points_temp)
 
     index_points_file(points, dccvt_points)
     index_pairs_file(points, pairs, dccvt_adjacencies)
@@ -107,7 +107,7 @@ def minimize_energies(
             )
             postprocess(
                 dccvt_consolidated,
-                temp_points,
+                dccvt_points_temp,
                 dccvt_output,
                 verbose=verbose,
             )
