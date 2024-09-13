@@ -4,6 +4,8 @@ MINIMIZE ENERGIES / MAXIMIZE POPULATION COMPACTNESS OF AN ENSEMBLE
 
 from typing import Any, Dict, List, Tuple
 
+from collections import defaultdict
+
 from rdabase import (
     mkPoints,
     mkAdjacencies,
@@ -16,6 +18,7 @@ from rdabase import (
     index_geoids,
     index_assignments,
     load_plan,
+    is_connected,
 )
 from rdadccvt import (
     file_list,
@@ -36,6 +39,7 @@ from rdadccvt import (
     calc_energy_file,
     calc_population_deviation_file,
     write_redistricting_points,
+    read_assignments,
     write_assignments,
 )
 
@@ -50,6 +54,7 @@ def minimize_energies(
     *,
     roughly_equal: float = 0.02,
     verbose: bool = False,
+    debug: bool = False,
 ) -> Dict[str, Any]:
     """Minimize the energies / maximize the population compactness of an ensemble of maps."""
 
@@ -98,6 +103,31 @@ def minimize_energies(
                 dccvt_balzer2,
                 balance=True,
             )
+
+            ### DEBUG - VERIFY THAT THE PLANS ARE STILL CONTIGUOUS
+            if debug:
+                balzer_assignments: List[IndexedWeightedAssignment] = read_assignments(
+                    dccvt_balzer2
+                )
+
+                district_ids: List[Any] = []
+                geoids_by_district: Dict[int | str, List[str]] = defaultdict(list)
+
+                for a in balzer_assignments:
+                    district_id: Any = a.site + 1
+                    geoid: str = points[a.point].geoid
+
+                    geoids_by_district[district_id].append(geoid)
+                    if district_id not in district_ids:
+                        district_ids.append(district_id)
+                for district_id in district_ids:
+                    geoids: List[str] = geoids_by_district[district_id]
+                    if not is_connected(geoids, graph):
+                        print(f"Plan {p['name']} is not contiguous!")
+                        assert False
+                print(f"Plan {p['name']}({i}) after Balzer is still contiguous.")
+            ###
+
             consolidate(
                 dccvt_balzer2,
                 dccvt_adjacencies,
@@ -105,6 +135,7 @@ def minimize_energies(
                 dccvt_consolidated,
                 verbose=verbose,
             )
+
             postprocess(
                 dccvt_consolidated,
                 dccvt_points_temp,

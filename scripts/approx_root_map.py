@@ -63,7 +63,7 @@ def main() -> None:
     ensemble: Dict[str, Any] = read_json(args.plans)
     plans: List[Dict[str, str | float | Dict[str, int | str]]] = ensemble["plans"]
 
-    ### VERIFY THAT ALL THE INPUT PLANS ARE CONTIGUOUS
+    ### DEBUG: VERIFY THAT ALL THE INPUT PLANS ARE CONTIGUOUS
     if args.debug:
         sample_plan: Dict[str, Any] = plans[0]["plan"]  # type: ignore
         district_ids: List[Any] = list(set(list(sample_plan.values())))
@@ -77,11 +77,19 @@ def main() -> None:
                 if not is_connected(geoids, graph):
                     print(f"Plan {p['name']} is not contiguous!")
                     assert False
+        print("All input plans are contiguous.")
     ###
 
     with open(args.log, "w") as f:
         min_energy_ensemble: Dict[str, Any] = minimize_energies(
-            plans, data, shapes, graph, metadata, f, verbose=args.verbose
+            plans,
+            data,
+            shapes,
+            graph,
+            metadata,
+            f,
+            verbose=args.verbose,
+            debug=args.debug,
         )
 
     lowest_plan: Dict[str, str | float | Dict[str, int | str]] = plan_from_ensemble(
