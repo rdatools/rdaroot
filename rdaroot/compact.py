@@ -2,7 +2,7 @@
 MINIMIZE ENERGIES / MAXIMIZE POPULATION COMPACTNESS OF AN ENSEMBLE
 """
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Set
 
 from collections import defaultdict
 
@@ -107,11 +107,26 @@ def minimize_energies(
                 balance=True,
             )
 
-            ### DEBUG - VERIFY THAT THE PLANS ARE STILL CONTIGUOUS
+            ### DEBUG - VERIFY THAT THE BALERIZED PLAN IS STILL WELL FORMED
             if debug:
                 balzer_assignments: List[IndexedWeightedAssignment] = read_assignments(
                     dccvt_balzer2
                 )
+
+                # All points are assigned
+
+                point_geoids: List[str] = [p.geoid for p in points]
+                assignment_geoids: Set[str] = set(
+                    [points[a.point].geoid for a in balzer_assignments]
+                )
+                for geoid in point_geoids:
+                    if geoid not in assignment_geoids:
+                        print(
+                            f"Balzer did not assign {geoid} with population {data[geoid]['TOTAL_POP']}."
+                        )
+                        assert False
+
+                # Districts are contiguous
 
                 district_ids: List[Any] = []
                 geoids_by_district: Dict[int | str, List[str]] = defaultdict(list)
@@ -126,9 +141,9 @@ def minimize_energies(
                 for district_id in district_ids:
                     geoids: List[str] = geoids_by_district[district_id]
                     if not is_connected(geoids, graph):
-                        print(f"After Balzer, {p['name']} is not contiguous!")
+                        print(f"After Balzer, {p['name']} is not contiguous!")  # type: ignore
                         assert False
-                print(f"Plan {p['name']}({i}) after Balzer is still contiguous.")
+                print(f"Plan {p['name']}({i}) after Balzer is still contiguous.")  # type: ignore
             ###
 
             consolidate(
