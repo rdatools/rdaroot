@@ -46,7 +46,7 @@ scripts/approx_root_map.py \
 --data ../rdabase/data/NC/NC_2020_data.csv \
 --shapes ../rdabase/data/NC/NC_2020_shapes_simplified.json \
 --graph ../rdabase/data/NC/NC_2020_graph.json \
---map ../../iCloud/fileout/root_maps/NC20U_plans.json/NC20U_root_map.csv \
+--map ../../iCloud/fileout/root_maps/NC20U_root_map.csv \
 --candidates ../../iCloud/fileout/root_maps/NC20U_root_candidates.json \
 --log ../../iCloud/fileout/root_maps/NC20U_root_log.txt \
 --no-debug
@@ -72,7 +72,7 @@ scripts/approx_root_map.py \
 --data ../rdabase/data/NC/NC_2020_data.csv \
 --shapes ../rdabase/data/NC/NC_2020_shapes_simplified.json \
 --graph ../rdabase/data/NC/NC_2020_graph.json \
---map ../../iCloud/fileout/root_maps/NC20L_plans.json/NC20L_root_map.csv \
+--map ../../iCloud/fileout/root_maps/NC20L_root_map.csv \
 --candidates ../../iCloud/fileout/root_maps/NC20L_root_candidates.json \
 --log ../../iCloud/fileout/root_maps/NC20L_root_log.txt \
 --no-debug
@@ -99,7 +99,7 @@ scripts/approx_root_map.py \
 --data ../rdabase/data/MD/MD_2020_data.csv \
 --shapes ../rdabase/data/MD/MD_2020_shapes_simplified.json \
 --graph ../rdabase/data/MD/MD_2020_graph.json \
---map ../../iCloud/fileout/root_maps/MD20C_plans.json/MD20C_root_map.csv \
+--map ../../iCloud/fileout/root_maps/MD20C_root_map.csv \
 --candidates ../../iCloud/fileout/root_maps/MD20C_root_candidates.json \
 --log ../../iCloud/fileout/root_maps/MD20C_root_log.txt \
 --no-debug
@@ -125,7 +125,7 @@ scripts/approx_root_map.py \
 --data ../rdabase/data/MD/MD_2020_data.csv \
 --shapes ../rdabase/data/MD/MD_2020_shapes_simplified.json \
 --graph ../rdabase/data/MD/MD_2020_graph.json \
---map ../../iCloud/fileout/root_maps/MD20U_plans.json/MD20U_root_map.csv \
+--map ../../iCloud/fileout/root_maps/MD20U_root_map.csv \
 --candidates ../../iCloud/fileout/root_maps/MD20U_root_candidates.json \
 --log ../../iCloud/fileout/root_maps/MD20U_root_log.txt \
 --no-debug
@@ -156,7 +156,7 @@ scripts/approx_root_map.py \
 --data ../rdabase/data/PA/PA_2020_data.csv \
 --shapes ../rdabase/data/PA/PA_2020_shapes_simplified.json \
 --graph ../rdabase/data/PA/PA_2020_graph.json \
---map ../../iCloud/fileout/root_maps/PA20C_plans.json/PA20C_root_map.csv \
+--map ../../iCloud/fileout/root_maps/PA20C_root_map.csv \
 --candidates ../../iCloud/fileout/root_maps/PA20C_root_candidates.json \
 --log ../../iCloud/fileout/root_maps/PA20C_root_log.txt \
 --no-debug
@@ -182,7 +182,7 @@ scripts/approx_root_map.py \
 --data ../rdabase/data/PA/PA_2020_data.csv \
 --shapes ../rdabase/data/PA/PA_2020_shapes_simplified.json \
 --graph ../rdabase/data/PA/PA_2020_graph.json \
---map ../../iCloud/fileout/root_maps/PA20U_plans.json/PA20U_root_map.csv \
+--map ../../iCloud/fileout/root_maps/PA20U_root_map.csv \
 --candidates ../../iCloud/fileout/root_maps/PA20U_root_candidates.json \
 --log ../../iCloud/fileout/root_maps/PA20U_root_log.txt \
 --no-debug
@@ -208,7 +208,7 @@ scripts/approx_root_map.py \
 --data ../rdabase/data/PA/PA_2020_data.csv \
 --shapes ../rdabase/data/PA/PA_2020_shapes_simplified.json \
 --graph ../rdabase/data/PA/PA_2020_graph.json \
---map ../../iCloud/fileout/root_maps/PA20L_plans.json/PA20L_root_map.csv \
+--map ../../iCloud/fileout/root_maps/PA20L_root_map.csv \
 --candidates ../../iCloud/fileout/root_maps/PA20L_root_candidates.json \
 --log ../../iCloud/fileout/root_maps/PA20L_root_log.txt \
 --no-debug
