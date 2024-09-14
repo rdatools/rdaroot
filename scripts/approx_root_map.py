@@ -67,9 +67,15 @@ def main() -> None:
     if args.debug:
         print()
         print("Verifying that all input plans are complete & contiguous:")
+        print()
         for p in plans:
+            plan_name: str = str(p["name"])
             assignments: List[Assignment] = [Assignment(k, v) for k, v in p["plan"].items()]  # type: ignore
-            plan_is_well_formed(str(p["name"]), assignments, data, graph)
+            well_formed: bool = plan_is_well_formed(plan_name, assignments, data, graph)
+            if not well_formed:
+                print("This input plan is not well formed.")
+                print()
+                assert False
 
         print("All input plans are complete & contiguous.")
         print()
@@ -190,6 +196,14 @@ def parse_args() -> Namespace:
         # "map": "temp/PA20U_rootmap.csv",
         # "candidates": "temp/PA20U_root_candidates.json",
         # "log": "temp/PA20U_root_log.txt",
+        # "state": "MD",
+        # "plans": "../rdaensemble/temp/MD20C_100_plans.json",
+        # "data": "../rdabase/data/MD/MD_2020_data.csv",
+        # "shapes": "../rdabase/data/MD/MD_2020_shapes_simplified.json",
+        # "graph": "../rdabase/data/MD/MD_2020_graph.json",
+        # "map": "temp/MD20C_rootmap.csv",
+        # "candidates": "temp/MD20C_root_candidates.json",
+        # "log": "temp/MD20C_root_log.txt",
     }
     args = require_args(args, args.debug, debug_defaults)
 

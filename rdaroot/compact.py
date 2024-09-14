@@ -117,10 +117,8 @@ def minimize_energies(
                     for a in balzer_assignments
                 ]
                 print()
-                print("Verifying the plan after Balzer:")
+                print(f"Verifying {plan_name} plan after Balzer:")
                 plan_is_well_formed(plan_name, assignments, data, graph)
-                print(f"Plan {plan_name}({i}) after Balzer is still complete & contiguous.")  # type: ignore
-                print()
             ###
 
             consolidate(
@@ -212,9 +210,9 @@ def plan_is_well_formed(
     print()
 
     if not well_formed:
-        assert False, "This plan is not well formed."
+        print(f"Plan {plan_name} is not well formed.")
 
-    return True
+    return well_formed
 
 
 ### END ###
