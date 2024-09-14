@@ -108,6 +108,6 @@ The resulting precinct-assignment files (map) can be imported into [Dave's Redis
 *Note: The code in this reposistory is in a somewhat indeterminate state.
 We used to ancestor repos (`alecramsay/baseline` and `proebsting/dccvt`) to generate the root maps
 for all 42 states with congressional districts.
-This repository, along with `rdatools/rdadcct' is a refactoring of those codebases, 
+This repository, along with `rdatools/rdadcct` is a refactoring of those codebases, 
 at the same time incorporating them into `rdatools`.
 It appears that in the process handling of water-only precincts was lost.*
