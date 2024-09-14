@@ -207,8 +207,6 @@ def plan_is_well_formed(
             print(f"District {district_id} in plan {plan_name} is not contiguous!")  # type: ignore
             well_formed = False
 
-    print()
-
     if not well_formed:
         print(f"Plan {plan_name} is not well formed.")
 
