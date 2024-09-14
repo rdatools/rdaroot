@@ -110,4 +110,7 @@ We used to ancestor repos (`alecramsay/baseline` and `proebsting/dccvt`) to gene
 for all 42 states with congressional districts.
 This repository, along with `rdatools/rdadcct` is a refactoring of those codebases, 
 at the same time incorporating them into `rdatools`.
-It appears that in the process handling of water-only precincts was lost.*
+It appears that in the process handling of water-only precincts was lost,
+so this doesn't work on states with water-only precincts.
+It also appears that it doesn't always work higher numbers of more granular districts relative to the number of precincts,
+e.g., for state houses.*
