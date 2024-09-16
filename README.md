@@ -58,10 +58,11 @@ This process is agnostic to the method used to generate the initial maps
 and the number plans in the initial collection.
 We've used 100 maps generated with two different methods:
 
-1. The first uses random maps from random spanning trees (RMfRST).
-2. The second uses random maps from random starting points (RMfRSP).
+1. The first uses random maps from random spanning trees (`rdaensemble/scripts/rmfrst_ensemble.py`).
+2. The second uses random maps from random starting points (`rdaensemble/scripts/rmfrsp_ensemble.py`).
 
 These methods are described and implemented in the [rdatools/rdaensemble](https://github.com/rdatools/rdaensemble) repository.
+Note: We use the term "random" loosely here.
 
 We implemented the second initially, before realizing that we could simply use the 
 conceptually simpler spanning-tree approach to generate the initial maps.
@@ -87,30 +88,36 @@ that is required by the [rdatools/rdadccvt](https://github.com/rdatools/rdadccvt
 
 To heuristically search for an approximate root map,
 generate an ensemble of contiguous maps with 'roughly equal' populations
-using the [rdatools/rdaensemble](https://github.com/rdatools/rdaensemble)
-and then run the search script like this:
+using one of the scripts above and 
+then search for the lowest energy plan in the ensemble like this:
 
 ```bash
+scripts/rmfrst_ensemble.py \
+    --state NC \
+    --plantype congress \
+    --roughlyequal 0.01 \
+    --size 100 \
+    --data ../rdabase/data/NC/NC_2020_data.csv \
+    --shapes ../rdabase/data/NC/NC_2020_shapes_simplified.json \
+    --graph ../rdabase/data/NC/NC_2020_graph.json \
+    --plans temp/NC20C_100_plans.json \
+    --log temp/NC20C_100_log.txt \
+    --no-debug
+
 scripts/approx_root_map.py \
     --state NC \
-    --plans ~/iCloud/fileout/ensembles/NC20C_RMfRST_100_plans.json \
+    --plans ../rdaensemble/temp/NC20C_100_plans.json \
     --data ../rdabase/data/NC/NC_2020_data.csv \
     --shapes ../rdabase/data/NC/NC_2020_shapes_simplified.json \
     --graph ../rdabase/data/NC/NC_2020_graph.json \
     --map temp/NC20C_root_map.csv \
     --candidates temp/NC20C_root_candidates.json \
     --log temp/NC20C_root_log.txt \
-    --no-debug
+    --no-debug 
 ```
 
-The resulting precinct-assignment files (map) can be imported into [Dave's Redistricting](https://davesredistricting.org/) (DRA).
+The resulting precinct-assignment files (plan) can be imported into [Dave's Redistricting](https://davesredistricting.org/) (DRA).
 
-*Note: The code in this reposistory is in a somewhat indeterminate state.
-We used to ancestor repos (`alecramsay/baseline` and `proebsting/dccvt`) to generate the root maps
-for all 42 states with congressional districts.
-This repository, along with `rdatools/rdadcct` is a refactoring of those codebases, 
-at the same time incorporating them into `rdatools`.
-It appears that in the process handling of water-only precincts was lost,
-so this doesn't work on states with water-only precincts.
-It also appears that it doesn't always work higher numbers of more granular districts relative to the number of precincts,
-e.g., for state houses.*
+*Note: This heuristic process might not work for all states and plan types (congress and upper &amp; lower state houses.
+As the ratio of precincts to districts gets low, there might not be enough flexibility in assignments of precincts to districts
+for the process to find maps that are both contiguous and have districts with 'roughly equal' population.*
