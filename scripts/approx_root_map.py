@@ -13,9 +13,9 @@ $ scripts/approx_root_map.py \
 --data ../rdabase/data/MD/MD_2020_data.csv \
 --shapes ../rdabase/data/MD/MD_2020_shapes_simplified.json \
 --graph ../rdabase/data/MD/MD_2020_graph.json \
---map ../../iCloud/fileout/rootmaps/MD20U_rootmap.csv \
---candidates ../../iCloud/fileout/rootmaps/MD20U_rootcandidates.json \
---log ../../iCloud/fileout/rootmaps/MD20U_rootlog.txt \
+--map ../../iCloud/fileout/root_maps/MD20U_root_map.csv \
+--candidates ../../iCloud/fileout/root_maps/MD20U_rootcandidates.json \
+--log ../../iCloud/fileout/root_maps/MD20U_rootlog.txt \
 --no-debug
 
 For documentation, type:
@@ -175,7 +175,7 @@ def parse_args() -> Namespace:
         # "data": "../rdabase/data/NC/NC_2020_data.csv",
         # "shapes": "../rdabase/data/NC/NC_2020_shapes_simplified.json",
         # "graph": "../rdabase/data/NC/NC_2020_graph.json",
-        # "map": "temp/NC20U_rootmap.csv",
+        # "map": "temp/NC20U_root_map.csv",
         # "candidates": "temp/NC20U_root_candidates.json",
         # "log": "temp/NC20U_root_log.txt",
         #
@@ -184,26 +184,28 @@ def parse_args() -> Namespace:
         # "data": "../rdabase/data/MD/MD_2020_data.csv",
         # "shapes": "../rdabase/data/MD/MD_2020_shapes_simplified.json",
         # "graph": "../rdabase/data/MD/MD_2020_graph.json",
-        # "map": "temp/MD20U_rootmap.csv",
+        # "map": "temp/MD20U_root_map.csv",
         # "candidates": "temp/MD20U_root_candidates.json",
         # "log": "temp/MD20U_root_log.txt",
         #
-        "state": "PA",
-        "plans": "../../iCloud/fileout/root_maps/PA20C_plans.json",
-        "data": "../rdabase/data/PA/PA_2020_data.csv",
-        "shapes": "../rdabase/data/PA/PA_2020_shapes_simplified.json",
-        "graph": "../rdabase/data/PA/PA_2020_graph.json",
-        "map": "temp/PA20C_root_map.csv",
-        "candidates": "temp/PA20C_root_candidates.json",
-        "log": "temp/PA20C_root_log.txt",
-        # "state": "MD",
-        # "plans": "../rdaensemble/temp/MD20C_100_plans.json",
-        # "data": "../rdabase/data/MD/MD_2020_data.csv",
-        # "shapes": "../rdabase/data/MD/MD_2020_shapes_simplified.json",
-        # "graph": "../rdabase/data/MD/MD_2020_graph.json",
-        # "map": "temp/MD20C_rootmap.csv",
-        # "candidates": "temp/MD20C_root_candidates.json",
-        # "log": "temp/MD20C_root_log.txt",
+        # "state": "PA",
+        # "plans": "../../iCloud/fileout/root_maps/PA20C_plans.json",
+        # "data": "../rdabase/data/PA/PA_2020_data.csv",
+        # "shapes": "../rdabase/data/PA/PA_2020_shapes_simplified.json",
+        # "graph": "../rdabase/data/PA/PA_2020_graph.json",
+        # "map": "temp/PA20C_root_map.csv",
+        # "candidates": "temp/PA20C_root_candidates.json",
+        # "log": "temp/PA20C_root_log.txt",
+        #
+        "state": "MD",
+        "plans": "../rdaensemble/temp/MD20C_100_plans.json",
+        "data": "../rdabase/data/MD/MD_2020_data.csv",
+        "shapes": "../rdabase/data/MD/MD_2020_shapes_simplified.json",
+        "graph": "../rdabase/data/MD/MD_2020_graph.json",
+        "map": "temp/MD20C_root_map.csv",
+        "candidates": "temp/MD20C_root_candidates.json",
+        "log": "temp/MD20C_root_log.txt",
+        "verbose": True,
     }
     args = require_args(args, args.debug, debug_defaults)
 

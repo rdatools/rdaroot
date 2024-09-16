@@ -64,6 +64,11 @@ def minimize_energies(
     points: List[Point] = mkPoints(data, shapes)
     pairs: List[Tuple[str, str]] = mkAdjacencies(Graph(graph))
 
+    if debug:
+        for point in points:
+            assert point.pop > 0.0
+        print("All precincts have non-zero population.")
+
     write_redistricting_points(points, dccvt_points_temp)
 
     index_points_file(points, dccvt_points)
