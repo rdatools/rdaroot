@@ -51,6 +51,7 @@ def minimize_energies(
     graph: Dict[str, List[str]],
     metadata: Dict[str, Any],
     logfile,
+    epsilon: float = 0.01,
     *,
     roughly_equal: float = 0.02,
     verbose: bool = False,
@@ -75,8 +76,10 @@ def minimize_energies(
     index_pairs_file(points, pairs, dccvt_adjacencies)
     indexed_geoids: Dict[str, int] = index_geoids(points)
 
-    pop_by_geoid: Dict[str, int] = populations(data)
-    total_pop: int = total_population(pop_by_geoid)
+    pop_by_geoid: Dict[str, float] = {
+        k: float(max(epsilon, v)) for k, v in populations(data).items()
+    }
+    total_pop: int = total_population(populations(data))
 
     min_energy_ensemble: Dict[str, Any] = dict()
     min_energy_plans: List[Dict[str, str | float | Dict[str, int | str]]] = list()
