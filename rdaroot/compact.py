@@ -76,10 +76,11 @@ def minimize_energies(
     index_pairs_file(points, pairs, dccvt_adjacencies)
     indexed_geoids: Dict[str, int] = index_geoids(points)
 
-    pop_by_geoid: Dict[str, float] = {
-        k: float(max(epsilon, v)) for k, v in populations(data).items()
+    ipop_by_geoid: Dict[str, int] = populations(data)
+    fpop_by_geoid: Dict[str, float] = {
+        k: float(max(epsilon, v)) for k, v in ipop_by_geoid.items()
     }
-    total_pop: int = total_population(populations(data))
+    total_pop: int = total_population(ipop_by_geoid)
 
     min_energy_ensemble: Dict[str, Any] = dict()
     min_energy_plans: List[Dict[str, str | float | Dict[str, int | str]]] = list()
@@ -102,7 +103,7 @@ def minimize_energies(
             Assignment(geoid, district) for geoid, district in plan_dict.items()
         ]
         indexed_assignments: List[IndexedWeightedAssignment] = index_assignments(
-            assignments, indexed_geoids, pop_by_geoid
+            assignments, indexed_geoids, fpop_by_geoid
         )
         write_assignments(dccvt_initial, indexed_assignments)
 
@@ -156,7 +157,7 @@ def minimize_energies(
 
         energy: float = calc_energy_file(dccvt_consolidated, dccvt_points)
         popdev: float = calc_population_deviation_file(
-            dccvt_output, pop_by_geoid, total_pop, N
+            dccvt_output, ipop_by_geoid, total_pop, N
         )
 
         if popdev < roughly_equal and energy < lowest_energy:
